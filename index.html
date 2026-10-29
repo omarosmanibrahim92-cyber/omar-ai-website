@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Omar Video Maker - صانع الفيديو</title>
+<style>
+body{font-family:system-ui;background:#0a0a0a;color:#fff;text-align:center;padding:15px;margin:0}
+h1{color:#ff0050}
+.card{background:#1a1a1a;padding:15px;border-radius:15px;max-width:500px;margin:15px auto;border:1px solid #333}
+textarea,input,select{width:95%;padding:12px;border-radius:10px;border:none;margin:8px 0;background:#2a2a2a;color:#fff;font-size:16px}
+button{background:#ff0050;color:#fff;padding:14px 25px;border:none;border-radius:10px;font-weight:bold;font-size:17px;width:95%;margin:5px}
+button.green{background:#00f2ea;color:#000}
+canvas{width:100%;max-width:360px;border-radius:15px;background:#000;margin:10px auto;display:block}
+.preview{background:#000}
+</style>
+</head>
+<body>
+<h1>🎬 Omar Video Maker</h1>
+<p>صانع فيديوهات تيك توك من عطبرة</p>
+
+<div class="card">
+<textarea id="txt" rows="3" placeholder="أكتب نص الفيديو هنا... مثلا: أهلا بكم في قناتي من عطبرة"></textarea>
+<select id="style">
+<option value="tiktok">ستايل تيك توك 🔥</option>
+<option value="news">ستايل أخبار 📰</option>
+<option value="islamic">ستايل إسلامي 🕌</option>
+</select>
+<input type="color" id="bgColor" value="#ff0050" title="لون الخلفية">
+<button onclick="makeVideo()">🎨 عرض الفيديو</button>
+<canvas id="c" width="720" height="1280"></canvas>
+<button class="green" onclick="record()">⬇️ حفظ الفيديو كـ MP4</button>
+<p id="status" style="color:#00f2ea"></p>
+</div>
+
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let recorder, chunks=[];
+
+function makeVideo(){
+let text=document.getElementById('txt').value || "Omar Video Maker من عطبرة";
+let style=document.getElementById('style').value;
+let color=document.getElementById('bgColor').value;
+let st=document.getElementById('status');
+st.innerText="جاري صنع الفيديو...";
+
+// خلفية
+ctx.fillStyle=color;
+ctx.fillRect(0,0,720,1280);
+
+// دائرة متحركة
+ctx.fillStyle="rgba(0,0,0,0.5)";
+ctx.fillRect(0,900,720,380);
+
+ctx.fillStyle="#fff";
+ctx.font="bold 48px system-ui";
+ctx.textAlign="center";
+wrapText(text,360,1050,600,60);
+
+if(style=="news"){
+ctx.fillStyle="#ff0"; ctx.fillRect(0,0,720,100);
+ctx.fillStyle="#000"; ctx.font="bold 40px system-ui"; ctx.fillText("عاجل - عطبرة",360,65);
+}
+st.innerText="✅ الفيديو جاهز! دوس حفظ الفيديو";
+}
+
+function wrapText(text,x,y,maxW,lineH){
+let words=text.split(' '); let line=''; let lines=[];
+for(let w of words){let t=line+w+' '; if(ctx.measureText(t).width>maxW){lines.push(line); line=w+' '}else line=t} lines.push(line);
+for(let i=0;i<lines.length;i++) ctx.fillText(lines[i],x,y+i*lineH);
+}
+
+function record(){
+let stream=canvas.captureStream(30);
+recorder=new MediaRecorder(stream,{mimeType:'video/webm'});
+chunks=[];
+recorder.ondataavailable=e=>{if(e.data.size>0) chunks.push(e.data)};
+recorder.onstop=()=>{
+let blob=new Blob(chunks,{type:'video/webm'});
+let url=URL.createObjectURL(blob);
+let a=document.createElement('a'); a.href=url; a.download='omar-video-'+Date.now()+'.webm'; a.click();
+document.getElementById('status').innerText="✅ تم الحفظ! الفيديو في ملفاتك";
+};
+recorder.start();
+document.getElementById('status').innerText="🔴 جاري التسجيل 3 ثواني...";
+setTimeout(()=>recorder.stop(),3000);
+}
+makeVideo();
+</script>
+</body>
+</html>
