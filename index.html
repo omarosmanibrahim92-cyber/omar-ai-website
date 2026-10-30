@@ -3,47 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar Video</title>
+<title>Omar Video - شغال</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
 h1{color:#05F2DB}
 .card{background:#111;padding:18px;border-radius:18px;max-width:480px;margin:15px auto}
 input{width:92%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333}
-button{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;font-size:17px}
-.gen{background:#05F2DB;color:#000}
-video{width:100%;border-radius:14px;margin:14px 0;background:#111}
+button{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;font-size:17px;background:#05F2DB;color:#000}
+iframe{width:100%;height:250px;border-radius:14px;margin:14px 0;border:0;background:#111}
 </style>
 </head>
 <body>
 <h1>🎬 Omar AI Video</h1>
 <div class="card">
 <input id="q" placeholder="اكتب: قطة، كلب، سيارة، طبيعة، بحر...">
-<button class="gen" onclick="getV()">جيب فيديو</button>
+<button onclick="getV()">جيب فيديو من يوتيوب ▶️</button>
 <p id="s" style="color:#05F2DB"></p>
-<video id="v" controls loop autoplay playsinline></video>
+<iframe id="v" src="https://www.youtube.com/embed/jNQXAC9IVRw" allowfullscreen></iframe>
 </div>
 <script>
 function getV(){
 let q=document.getElementById('q').value.toLowerCase();
 let s=document.getElementById('s');
 let v=document.getElementById('v');
-s.innerText="⏳ بجيب ليك فيديو...";
-
-let cat="https://upload.wikimedia.org/wikipedia/commons/2/2c/Roaring_British_Lion_in_British_Video_Archive.mp4";
-let car="https://upload.wikimedia.org/wikipedia/commons/8/8f/Car_driving_on_road.mp4";
-let nature="https://upload.wikimedia.org/wikipedia/commons/4/4d/Waterfall_in_Sweden.mp4";
-let sea="https://upload.wikimedia.org/wikipedia/commons/8/89/Ocean_waves.mp4";
-let dog="https://upload.wikimedia.org/wikipedia/commons/c/c3/Dog_running.mp4";
-let def="https://upload.wikimedia.org/wikipedia/commons/8/89/Ocean_waves.mp4";
-
-if(q.includes("قط")||q.includes("cat")||q.includes("lion")||q.includes("أسد")) v.src=cat;
-else if(q.includes("سيار")||q.includes("car")||q.includes("عرب")) v.src=car;
-else if(q.includes("كلب")||q.includes("dog")) v.src=dog;
-else if(q.includes("بحر")||q.includes("sea")||q.includes("ocean")) v.src=sea;
-else v.src=nature;
-
-v.load(); v.play();
-s.innerText="✅ فيديو جاهز! بيتحرك هسي";
+s.innerText="⏳ بجيب ليك...";
+let cat="https://www.youtube.com/embed/hY7m5jjJ9mM";
+let dog="https://www.youtube.com/embed/mRf3-Jkw1dQ";
+let car="https://www.youtube.com/embed/6_5o3r3cP1k";
+let nature="https://www.youtube.com/embed/BHACKCNDMW8";
+let sea="https://www.youtube.com/embed/6p0hXm1w7aA";
+if(q.includes("قط")||q.includes("cat")||q.includes("أسد")||q.includes("lion")) v.src=cat+"?autoplay=1";
+else if(q.includes("كلب")||q.includes("dog")) v.src=dog+"?autoplay=1";
+else if(q.includes("سيار")||q.includes("car")||q.includes("عرب")) v.src=car+"?autoplay=1";
+else if(q.includes("بحر")||q.includes("sea")||q.includes("ocean")) v.src=sea+"?autoplay=1";
+else v.src=nature+"?autoplay=1";
+s.innerText="✅ فيديو شغال هسي من يوتيوب!";
 }
 </script>
 </body>
