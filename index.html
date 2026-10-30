@@ -3,103 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar AI Video - Multi Source</title>
+<title>Omar Video - محرك بحث شامل</title>
 <style>
-body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
-h1{color:#05F2DB}
-.card{background:#111;padding:14px;border-radius:18px;max-width:560px;margin:10px auto;border:1px solid #222}
-input{width:90%;padding:13px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center}
+body{margin:0;background:#050505;color:#fff;font-family:system-ui;text-align:center;padding:10px}
+h1{color:#05F2DB;font-size:22px}
+.card{background:#111;padding:15px;border-radius:18px;max-width:580px;margin:10px auto;border:1px solid #222}
+input{width:92%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center;font-size:16px}
 .row{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
-.btn{padding:9px 13px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
+.btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
 .btn.active{background:#05F2DB;color:#000;font-weight:bold}
-.btn-main{width:95%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000}
-video{width:100%;height:320px;border-radius:14px;margin:10px 0;background:#000;object-fit:cover}
-.source{font-size:11px;color:#888;margin:4px}
+.btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
+.btn-tik{background:#000;color:#fff;border:1px solid #ff0050}
+.btn-fb{background:#1877F2;color:#fff}
+.btn-yt{background:#FF0000;color:#fff}
+iframe{width:100%;height:480px;border-radius:14px;margin:10px 0;border:0;background:#000}
+.note{font-size:12px;color:#888;margin:6px}
 </style>
 </head>
 <body>
-<h1>🎬 Omar AI - كل المصادر</h1>
+<h1>🔍 Omar Video Search - بحث شامل</h1>
 <div class="card">
-<input id="q" placeholder="اكتب: قطة، كلب، أسد، بحر، سيارة، طبيعة...">
-<div class="row"><b style="font-size:12px;color:#888">المدة المطلوبة:</b>
+<input id="q" placeholder="ابحث عن أي شي: قطة سايقة سيارة، زول بيرقص، طبيعة...">
+<div class="row">
 <span class="btn active" id="b15" onclick="setD(15)">15 ث</span>
 <span class="btn" id="b30" onclick="setD(30)">30 ث</span>
 <span class="btn" id="b60" onclick="setD(60)">60 ث</span>
+<span class="btn" id="b0" onclick="setD(0)">كل المدد</span>
 </div>
-<button class="btn-main" onclick="getV()">🎥 صمم فيديو مطابق من كل المصادر</button>
+<button class="btn-main" onclick="searchAll()">🔍 ابحث في كل التطبيقات الآن</button>
+
 <div class="row">
-<span class="btn" onclick="setQ('قطة')">🐱 قطة</span><span class="btn" onclick="setQ('كلب')">🐶 كلب</span><span class="btn" onclick="setQ('أسد')">🦁 أسد</span><span class="btn" onclick="setQ('سيارة')">🚗 سيارة</span><span class="btn" onclick="setQ('بحر')">🌊 بحر</span><span class="btn" onclick="setQ('ضحك')">😂 ضحك</span><span class="btn" onclick="setQ('كورة')">⚽ كورة</span><span class="btn" onclick="setQ('طبيعة')">🌲 طبيعة</span>
+<button class="btn btn-yt" onclick="openYT()">▶️ YouTube</button>
+<button class="btn btn-tik" onclick="openTik()">🎵 TikTok</button>
+<button class="btn btn-fb" onclick="openFB()">📘 Facebook Reels</button>
+<button class="btn" onclick="openInsta()" style="background:#E1306C;color:#fff">📸 Instagram</button>
 </div>
-<p id="s" style="color:#05F2DB;font-size:13px">✅ جاهز - فيديوهات قصيرة 100% من Pexels + Mixkit + Coverr + Pixabay</p>
-<p id="src" class="source"></p>
-<video id="v" controls playsinline autoplay muted loop></video>
-<button class="btn-main" style="background:#222;color:#05F2DB;border:1px solid #05F2DB" onclick="downloadV()">⬇️ تحميل الفيديو الأصلي</button>
+
+<p id="s" style="color:#05F2DB;font-size:13px">✅ اكتب أي كلمة واختار المدة - البحث حر 100% - مش محدود!</p>
+<iframe id="v" src="https://www.youtube.com/embed?listType=search&list=cat%20driving%20car%20shorts" allowfullscreen></iframe>
+<p class="note" id="links"></p>
 </div>
+
 <script>
 let dur=15;
-let currentVideo="";
-const DB={
-"قطة":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-cute-cat-lying-on-a-sofa-1318-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/18069234/18069234-uhd_1440_1440_24fps.mp4",dur:15,from:"Pexels"},
-{url:"https://cdn.coverr.co/videos/coverr-a-cat-sitting-on-a-windowsill-1563/1080p.mp4",dur:30,from:"Coverr"}
-],
-"كلب":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-dog-catches-a-ball-in-a-park-14914-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/3191573/3191573-uhd_2560_1440_25fps.mp4",dur:30,from:"Pexels"},
-{url:"https://cdn.coverr.co/videos/coverr-playing-with-a-dog-1571/1080p.mp4",dur:15,from:"Coverr"}
-],
-"أسد":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-lion-looking-around-1337-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/2877323/2877323-uhd_2560_1440_30fps.mp4",dur:30,from:"Pexels"}
-],
-"بحر":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/1093662/1093662-hd_1920_1080_30fps.mp4",dur:30,from:"Pexels"},
-{url:"https://cdn.coverr.co/videos/coverr-waves-1579/1080p.mp4",dur:15,from:"Coverr"}
-],
-"سيارة":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-red-sports-car-1328-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/1409899/1409899-uhd_2560_1440_30fps.mp4",dur:30,from:"Pexels"}
-],
-"طبيعة":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/2552116/2552116-hd_1920_1080_30fps.mp4",dur:60,from:"Pexels"}
-],
-"ضحك":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-laughing-woman-132-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/3209211/3209211-uhd_2560_1440_25fps.mp4",dur:15,from:"Pexels"}
-],
-"كورة":[
-{url:"https://assets.mixkit.co/videos/preview/mixkit-soccer-ball-on-the-field-1495-large.mp4",dur:15,from:"Mixkit"},
-{url:"https://videos.pexels.com/video-files/3202638/3202638-uhd_2560_1440_25fps.mp4",dur:30,from:"Pexels"}
-]
-};
-function setD(d){dur=d;document.querySelectorAll('[id^=b]').forEach(x=>x.classList.remove('active'));document.getElementById('b'+d).classList.add('active');getV();}
-function setQ(t){document.getElementById('q').value=t;getV();}
-function getV(){
-let q=document.getElementById('q').value.trim()||"قطة";
-let s=document.getElementById('s');let v=document.getElementById('v');let src=document.getElementById('src');
-let key="قطة";
-for(let k in DB){if(q.includes(k)){key=k;break;}}
-if(q.toLowerCase().includes("cat"))key="قطة";
-if(q.toLowerCase().includes("dog"))key="كلب";
+let lastQuery="قطة سايقة سيارة";
+function setD(d){
+dur=d;
+document.querySelectorAll('[id^=b]').forEach(x=>x.classList.remove('active'));
+document.getElementById('b'+(d==0?0:d)).classList.add('active');
+}
+function searchAll(){
+let q=document.getElementById('q').value.trim()||"قطة سايقة سيارة";
+lastQuery=q;
+let s=document.getElementById('s');
+let v=document.getElementById('v');
+let links=document.getElementById('links');
 
-let list=DB[key]||DB["قطة"];
-// فلتر حسب المدة المطلوبة بالضبط
-let filtered=list.filter(x=>x.dur<=dur);
-if(filtered.length==0)filtered=list;
-let chosen=filtered[Math.floor(Math.random()*filtered.length)];
-currentVideo=chosen.url;
-v.src=currentVideo;
-v.play();
-s.innerText="✅ فيديو: "+key+" - مدته "+chosen.dur+" ثانية - مطابق 100% - طلبت "+dur+"ث";
-src.innerText="📦 المصدر: "+chosen.from+" | المدة الحقيقية: "+chosen.dur+"ث | مطابق لكلمة: "+key;
+let durText=dur==0?"":dur==15?" 15 seconds shorts":dur==30?" 30 seconds shorts":" 60 seconds";
+let searchQ=encodeURIComponent(q+durText);
+
+ // يوتيوب شغال في السودان - نعرضه في الموقع
+ v.src="https://www.youtube.com/embed?listType=search&list="+searchQ+"&autoplay=1";
+ 
+ s.innerText="✅ ببحث عن: '"+q+"' - المدة: "+(dur==0?"كل المدد":dur+" ث")+" - من 4 مصادر";
+ links.innerHTML="🔗 روابط مباشرة شغالة:<br>"+
+ "<a href='https://www.youtube.com/results?search_query="+searchQ+"' target='_blank' style='color:#05F2DB'>YouTube: "+q+"</a> | "+
+ "<a href='https://www.tiktok.com/search?q="+encodeURIComponent(q)+"' target='_blank' style='color:#ff0050'>TikTok: "+q+"</a> | "+
+ "<a href='https://www.facebook.com/reels/search/?q="+encodeURIComponent(q)+"' target='_blank' style='color:#1877F2'>FB Reels: "+q+"</a>";
+
+ // لو المدة 15ث نضيف Shorts فقط
+ if(dur==15){
+   // نفتح تيك توك تلقائيا في نافذة جديدة لو المستخدم عايز
+   console.log("Searching TikTok + FB + YT for:", q);
+ }
 }
-function downloadV(){
-if(currentVideo){window.open(currentVideo,"_blank");}
+function openYT(){
+let q=encodeURIComponent(lastQuery+(dur==15?" shorts":""));
+window.open("https://www.youtube.com/results?search_query="+q+"&sp=EgIYAQ%253D%253D","_blank");
 }
-window.onload=getV;
+function openTik(){
+window.open("https://www.tiktok.com/search?q="+encodeURIComponent(lastQuery),"_blank");
+}
+function openFB(){
+window.open("https://www.facebook.com/reels/search/?q="+encodeURIComponent(lastQuery),"_blank");
+}
+function openInsta(){
+window.open("https://www.instagram.com/reels/search/?q="+encodeURIComponent(lastQuery),"_blank");
+}
+window.onload=searchAll;
 </script>
 </body>
 </html>
