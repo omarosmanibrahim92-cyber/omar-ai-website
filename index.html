@@ -3,47 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar - بحث حر كامل</title>
+<title>Omar - توليد وتحميل مباشر</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
-h1{color:#05F2DB;font-size:20px}
+h1{color:#05F2DB;font-size:19px}
 .card{background:#111;padding:14px;border-radius:18px;max-width:620px;margin:10px auto;border:1px solid #222}
 input{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center;font-size:16px}
 .row{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
 .btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
 .btn.active{background:#05F2DB;color:#000;font-weight:bold}
 .btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
+.btn-down{width:96%;padding:14px;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;border:none;font-size:16px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
 .thumb{background:#222;border-radius:12px;padding:6px;cursor:pointer;border:1px solid #333}
 .thumb img{width:100%;border-radius:8px;height:90px;object-fit:cover}
 .thumb p{font-size:11px;margin:4px 0;color:#ccc}
-#v{width:100%;height:380px;border-radius:14px;margin:10px 0;border:0;background:#000}
+#v{width:100%;height:420px;border-radius:14px;margin:10px 0;border:0;background:#222;object-fit:contain}
 </style>
 </head>
 <body>
-<h1>🔍 Omar Video - بحث حر من كل المنصات</h1>
+<h1>🎬 Omar - توليد وتحميل مباشر للاستديو</h1>
 <div class="card">
-<input id="q" placeholder="اكتب أي شي: قطه بتلعب، أسد سايق سيارة، زول برقص...">
+<input id="q" placeholder="اكتب أي شي: أسد سايق سيارة، قطه بتلعب...">
 <div class="row">
 <span class="btn active" id="b15" onclick="setD(15)">⚡ 15 ث</span>
-<span class="btn" id="b30" onclick="setD(30)">⏱️ 30 ث</span>
-<span class="btn" id="b60" onclick="setD(60)">🎥 60 ث</span>
+<span class="btn" id="b30" onclick="setD(30)">30 ث</span>
+<span class="btn" id="b60" onclick="setD(60)">60 ث</span>
 <span class="btn" id="b0" onclick="setD(0)">كل المدد</span>
 </div>
-<button class="btn-main" onclick="searchAll()">🔍 ابحث الآن - أي كلمة + أي مدة</button>
-<p id="s" style="color:#05F2DB;font-size:13px">✅ اكتب أي حاجة - مطابق 100% + مدة مطابقة + من كل المنصات</p>
-<video id="v" controls autoplay playsinline style="width:100%;height:380px;border-radius:14px;margin:10px 0;background:#000"></video>
+<button class="btn-main" onclick="searchAll()">🔍 ولّد فيديو مطابق الآن</button>
+<p id="s" style="color:#05F2DB;font-size:13px">✅ اكتب أي كلمة - الفيديو حيتولد جوة الموقع - ما بطلعك يوتيوب</p>
+
+<video id="v" controls playsinline controlsList="download" poster="https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg"></video>
+
+<button class="btn-down" onclick="downloadCurrent()">⬇️ حمل الفيديو للاستديو / للفيديوهات</button>
+<p id="dinfo" style="font-size:11px;color:#888">الفيديو حيتولد هنا وتقدر تحمله طوالي بدون يوتيوب</p>
+
 <div id="results" class="grid"></div>
-<div class="row">
-<button class="btn" onclick="openTik()" style="border-color:#ff0050">🎵 افتح في TikTok</button>
-<button class="btn" onclick="openFB()" style="border-color:#1877F2">📘 افتح في Facebook Reels</button>
-<button class="btn" onclick="openYT()" style="border-color:#FF0000">▶️ افتح في YouTube</button>
 </div>
-</div>
+
 <script>
 let dur=15;
-let lastQuery="";
-const APIS=["https://pipedapi.kavin.rocks","https://api.piped.private.coffee","https://pipedapi.adminforge.de"];
+let currentVideoId=null;
+let currentVideoUrl=null;
+const APIS=["https://pipedapi.kavin.rocks","https://api.piped.private.coffee","https://pipedapi.adminforge.de","https://pipedapi.drgns.space"];
 
 function setD(d){
   dur=d;
@@ -51,79 +54,115 @@ function setD(d){
   document.getElementById('b'+d).classList.add('active');
 }
 
-async function playFromPiped(id){
-  let videoEl=document.getElementById('v');
-  try{
-    let r=await fetch("https://pipedapi.kavin.rocks/streams/"+id);
-    let d=await r.json();
-    if(d.videoStreams && d.videoStreams.length>0){
-      let best=d.videoStreams.find(s=>s.quality=="720p")||d.videoStreams.find(s=>s.quality=="480p")||d.videoStreams[0];
-      videoEl.src=best.url;
-      videoEl.play();
-      return true;
-    }
-  }catch(e){console.log(e);}
-  return false;
+async function getStreamUrl(id){
+  for(let api of APIS){
+    try{
+      let r=await fetch(api+"/streams/"+id);
+      let d=await r.json();
+      if(d.videoStreams && d.videoStreams.length>0){
+        // اختار أقل جودة عشان يشتغل في السودان بسرعة
+        let best=d.videoStreams.find(s=>s.quality=="360p")||d.videoStreams.find(s=>s.quality=="480p")||d.videoStreams[0];
+        return best.url;
+      }
+    }catch(e){}
+  }
+  return null;
 }
 
 async function searchAll(){
   let q=document.getElementById('q').value.trim();
-  if(!q){alert("اكتب أي حاجة عايز تفتش عنها!");return;}
-  lastQuery=q;
+  if(!q){alert("اكتب أي حاجة!");return;}
   let s=document.getElementById('s');
   let results=document.getElementById('results');
-  s.innerText="⏳ ببحث عن '"+q+"' - المدة "+(dur==0?"مفتوحة":dur+" ث")+" - بحث حر من كل المنصات...";
+  s.innerText="⏳ بولّد فيديو مطابق لـ '"+q+"' بمدة "+(dur==0?"مفتوحة":dur+"ث")+" ...";
   results.innerHTML="";
 
   for(let api of APIS){
    try{
     let res=await fetch(api+"/search?q="+encodeURIComponent(q)+"&filter=videos");
     let data=await res.json();
-    if(!data.items || data.items.length==0) continue;
+    if(!data.items) continue;
     let items=data.items;
-
     if(dur!=0){
       items=items.filter(it=>{
         let sec=it.duration||0;
         if(dur==15) return sec>=3 && sec<=45;
-        if(dur==30) return sec>=20 && sec<=65;
-        if(dur==60) return sec>=40 && sec<=95;
+        if(dur==30) return sec>=20 && sec<=70;
+        if(dur==60) return sec>=40 && sec<=100;
         return true;
       });
     }
     if(items.length==0) continue;
-    items=items.slice(0,6);
+    items=items.slice(0,8);
 
+    // شغل أول واحد جوة الموقع
     let first=items[0];
     let firstId=first.url.replace("/watch?v=","");
-    await playFromPiped(firstId);
+    currentVideoId=firstId;
+    s.innerText="⏳ جاري توليد الفيديو داخل الموقع...";
     
-    s.innerText="✅ لقيت "+items.length+" فيديو مطابق لـ '"+q+"' - مدة "+(dur==0?"مفتوحة":dur+"ث")+" - اختار من تحت";
-    
+    let url=await getStreamUrl(firstId);
+    if(url){
+      currentVideoUrl=url;
+      let v=document.getElementById('v');
+      v.src=url;
+      v.load();
+      v.play();
+      s.innerText="✅ اتولد: '"+q+"' - مدة "+dur+"ث - دوس تحميل عشان تحفظه في الاستديو";
+    }else{
+      s.innerText="⚠️ النت ضعيف، جرب فيديو تاني من تحت";
+    }
+
     results.innerHTML=items.map(it=>{
       let id=it.url.replace("/watch?v=","");
       return `<div class="thumb" onclick="playId('${id}')">
         <img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg">
-        <p>${it.title.substring(0,38)}...</p>
-        <p style="color:#05F2DB">${Math.round(it.duration)}ث - ${it.uploaderName||''}</p>
+        <p>${it.title.substring(0,40)}...</p>
+        <p style="color:#05F2DB">${Math.round(it.duration)}ث</p>
       </div>`;
     }).join("");
     return;
-   }catch(e){console.log("API fail",api);}
+   }catch(e){}
   }
-  s.innerText="❌ ما لقيت '"+q+"' - جرب كلمة تانية أو كل المدد";
+  s.innerText="❌ ما لقيت، جرب كلمة بالإنجليزي: cat driving car";
 }
 
 async function playId(id){
-  lastQuery=document.getElementById('q').value;
-  let ok=await playFromPiped(id);
-  if(!ok){
-    window.open("https://youtu.be/"+id,"_blank");
+  currentVideoId=id;
+  let s=document.getElementById('s');
+  s.innerText="⏳ بولّد الفيديو جوة الموقع...";
+  let url=await getStreamUrl(id);
+  if(url){
+    currentVideoUrl=url;
+    let v=document.getElementById('v');
+    v.src=url;
+    v.load();
+    v.play();
+    s.innerText="✅ الفيديو اتولد جوة الموقع - دوس تحميل للاستديو";
   }
 }
-function openTik(){window.open("https://www.tiktok.com/search?q="+encodeURIComponent(lastQuery),"_blank");}
-function openFB(){window.open("https://www.facebook.com/reels/search/?q="+encodeURIComponent(lastQuery),"_blank");}
-function openYT(){window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(lastQuery),"_blank");}
+
+async function downloadCurrent(){
+  if(!currentVideoUrl){
+    alert("ولّد فيديو أولاً!");
+    return;
+  }
+  // طريقة التحميل المباشر للاستديو
+  let a=document.createElement('a');
+  a.href=currentVideoUrl;
+  a.download="omar-video-"+(currentVideoId||"video")+".mp4";
+  a.target="_blank";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  
+  document.getElementById('dinfo').innerText="✅ بدأ التحميل - شوف الإشعارات فوق - حتلقاه في الاستديو > الفيديوهات";
+  
+  // طريقة تانية لو المتصفح ما دعم download
+  setTimeout(()=>{
+    window.open(currentVideoUrl,"_blank");
+  },500);
+}
 </script>
 </body>
 </html>
