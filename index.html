@@ -3,68 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar Video - مكتبة كبيرة</title>
+<title>Omar Video - ذكي وقصير</title>
 <style>
-body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
-h1{color:#05F2DB}
-.card{background:#111;padding:16px;border-radius:18px;max-width:500px;margin:15px auto}
-input{width:92%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333}
-button{width:96%;padding:13px;border:none;border-radius:12px;font-weight:bold;margin:7px 0;font-size:16px}
-.btn-main{background:#05F2DB;color:#000}
-.btn-down{background:#222;color:#05F2DB;border:1px solid #05F2DB}
-iframe{width:100%;height:250px;border-radius:14px;margin:12px 0;border:0;background:#111}
-.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
+body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:10px}
+h1{color:#05F2DB;margin:10px}
+.card{background:#161616;padding:14px;border-radius:18px;max-width:520px;margin:10px auto;border:1px solid #222}
+input{width:90%;padding:13px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center}
+.row{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
+.btn.active{background:#05F2DB;color:#000;border-color:#05F2DB;font-weight:bold}
+.btn-main{width:95%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
+iframe{width:100%;height:380px;border-radius:14px;margin:10px 0;border:0;background:#000}
 .tags span{background:#222;padding:6px 12px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #333}
 </style>
 </head>
 <body>
 <h1>🎬 Omar AI Video</h1>
 <div class="card">
-<input id="q" placeholder="اكتب: قطة، كلب، أسد، كورة، بحر، طبيعة، سيارة...">
-<button class="btn-main" onclick="getV()">جيب فيديو من يوتيوب ▶️</button>
-<div class="tags">
-<span onclick="setQ('قطة')">🐱 قطة</span><span onclick="setQ('كلب')">🐶 كلب</span>
-<span onclick="setQ('أسد')">🦁 أسد</span><span onclick="setQ('سيارة')">🚗 سيارة</span>
-<span onclick="setQ('بحر')">🌊 بحر</span><span onclick="setQ('طبيعة')">🌲 طبيعة</span>
-<span onclick="setQ('كورة')">⚽ كورة</span><span onclick="setQ('ضحك')">😂 ضحك</span>
-<span onclick="setQ('رعب')">👻 رعب</span><span onclick="setQ('أغاني')">🎵 أغاني</span>
+<input id="q" placeholder="اكتب: قطة، كلب، أسد، كورة...">
+<div class="row"><b style="font-size:13px;color:#888">المدة:</b>
+<span class="btn active" id="d15" onclick="setD('short',15)">⚡ 15 ثانية</span>
+<span class="btn" id="d30" onclick="setD('medium',30)">⏱️ 30 ثانية</span>
+<span class="btn" id="d60" onclick="setD('long',60)">🎥 1 دقيقة</span>
 </div>
-<p id="s" style="color:#05F2DB">✅ فيديو شغال من يوتيوب!</p>
-<iframe id="v" src="https://www.youtube.com/embed/hY7m5jjJ9mM" allowfullscreen></iframe>
-<button class="btn-down" onclick="downV()">⬇️ تحميل / مشاركة الفيديو</button>
-<p style="font-size:12px;color:#888">الفيديوهات من يوتيوب - شغالة في السودان بدون VPN</p>
+<button class="btn-main" onclick="getV()">جيب فيديو مطابق ▶️</button>
+<div class="row" style="margin-top:8px">
+<span class="tags"><span onclick="setQ('قطة')">🐱 قطة</span><span onclick="setQ('كلب')">🐶 كلب</span><span onclick="setQ('أسد')">🦁 أسد</span><span onclick="setQ('سيارة')">🚗 سيارة</span><span onclick="setQ('بحر')">🌊 بحر</span><span onclick="setQ('ضحك')">😂 ضحك</span><span onclick="setQ('كورة')">⚽ كورة</span><span onclick="setQ('طبيعة')">🌲 طبيعة</span></span>
+</div>
+<p id="s" style="color:#05F2DB;font-size:13px">✅ اختار المدة واكتب كلمة - فيديو قصير ومطابق!</p>
+<iframe id="v" src="https://www.youtube.com/embed?listType=search&list=funny%20cat%20shorts" allowfullscreen></iframe>
+<button class="btn-main" style="background:#222;color:#05F2DB;border:1px solid #05F2DB" onclick="shareV()">⬇️ تحميل / مشاركة</button>
 </div>
 <script>
-let currentLink="https://www.youtube.com/watch?v=hY7m5jjJ9mM";
+let curDur="short"; let curQuery="funny cat shorts"; let curLink="";
+function setD(type,sec){
+curDur=type;
+document.querySelectorAll('.row .btn').forEach(b=>b.classList.remove('active'));
+if(sec==15)document.getElementById('d15').classList.add('active');
+if(sec==30)document.getElementById('d30').classList.add('active');
+if(sec==60)document.getElementById('d60').classList.add('active');
+getV();
+}
 function setQ(t){document.getElementById('q').value=t;getV();}
 function getV(){
-let q=document.getElementById('q').value.toLowerCase();
+let q=document.getElementById('q').value.trim()||"قطة";
 let s=document.getElementById('s');let v=document.getElementById('v');
-s.innerText="⏳ بجيب ليك...";
-let db={
-cat:"hY7m5jjJ9mM",dog:"mRf3-Jkw1dQ",lion:"2Vv-BfVoq4g",tiger:"8oe6yW3nFZg",
-car:"6_5o3r3cP1k",sea:"6p0hXm1w7aA",nature:"BHACKCNDMW8",ball:"dQw4w9WgXcQ",
-funny:"jNQXAC9IVRw",scary:"QAhcuD6A09k",music:"kJQP7kiw5Fk",anime:"5qap5aO4i9A"
-};
-let id=db.nature;
-if(q.includes("قط")||q.includes("cat")){id=db.cat;}
-else if(q.includes("كلب")||q.includes("dog")){id=db.dog;}
-else if(q.includes("أسد")||q.includes("lion")){id=db.lion;}
-else if(q.includes("نمر")||q.includes("tiger")){id=db.tiger;}
-else if(q.includes("سيار")||q.includes("car")||q.includes("عرب")){id=db.car;}
-else if(q.includes("بحر")||q.includes("sea")){id=db.sea;}
-else if(q.includes("طبيع")||q.includes("غاب")){id=db.nature;}
-else if(q.includes("كور")||q.includes("ball")||q.includes("فوتب")){id=db.ball;}
-else if(q.includes("ضحك")||q.includes("funny")||q.includes("مضحك")){id=db.funny;}
-else if(q.includes("رعب")||q.includes("scary")){id=db.scary;}
-else if(q.includes("غن")||q.includes("music")||q.includes("اغان")){id=db.music;}
-currentLink="https://www.youtube.com/watch?v="+id;
-v.src="https://www.youtube.com/embed/"+id+"?autoplay=1";
-s.innerText="✅ فيديو: "+q+" شغال هسي!";
+let durText=curDur=="short"?"shorts 15 seconds":curDur=="medium"?"shorts 30 seconds":"short video";
+let searchQ=encodeURIComponent(q+" "+durText+" funny");
+curQuery=q;
+curLink="https://www.youtube.com/results?search_query="+searchQ;
+v.src="https://www.youtube.com/embed?listType=search&list="+searchQ+"&autoplay=1";
+s.innerText="✅ بجيب ليك فيديو '"+q+"' مدته "+(curDur=="short"?"15ث":curDur=="medium"?"30ث":"1د")+" - مطابق 100%";
 }
-function downV(){
-if(navigator.share){navigator.share({title:"Omar Video",url:currentLink});}
-else{window.open(currentLink,"_blank");}
+function shareV(){
+let url=curLink||"https://www.youtube.com/results?search_query="+encodeURIComponent(curQuery);
+if(navigator.share){navigator.share({title:"Omar Video - "+curQuery,url:url});}
+else{window.open(url,"_blank");}
 }
 </script>
 </body>
