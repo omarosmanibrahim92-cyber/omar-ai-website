@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html dir="rtl" lang="ar">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar REAL VIDEO</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Omar Video</title>
 <style>
-body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center}
-h1{color:#ff0050}
-.card{background:#111;padding:16px;border-radius:16px;max-width:500px;margin:15px auto}
-textarea{width:94%;padding:12px;border-radius:10px;background:#1e1e1e;color:#fff}
-button{width:95%;padding:14px;border:none;border-radius:10px;font-weight:bold;margin:8px 0}
-.gen{background:#ff0050;color:#fff}
-.dl{background:#00f2ea;color:#000}
-video{width:100%;max-width:360px;border-radius:12px;margin:12px auto;display:block}
-</style></head>
+body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
+h1{color:#05F2DB}
+.card{background:#111;padding:18px;border-radius:18px;max-width:480px;margin:15px auto}
+input{width:92%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333}
+button{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;font-size:17px}
+.gen{background:#05F2DB;color:#000}
+video{width:100%;border-radius:14px;margin:14px 0;background:#111}
+</style>
+</head>
 <body>
-<h1>🎬 Omar REAL VIDEO</h1>
+<h1>🎬 Omar AI Video</h1>
 <div class="card">
-<textarea id="p" rows="3" placeholder="lion, car, nature"></textarea>
-<button class="gen" onclick="getV()">جيب فيديو حقيقي</button>
-<p id="s" style="color:#00f2ea"></p>
-<video id="v" controls loop autoplay playsinline style="display:none"></video>
-<button class="dl" id="d" style="display:none" onclick="down()">حفظ</button>
+<input id="q" placeholder="اكتب: قطة، كلب، سيارة، طبيعة، بحر...">
+<button class="gen" onclick="getV()">جيب فيديو</button>
+<p id="s" style="color:#05F2DB"></p>
+<video id="v" controls loop autoplay playsinline></video>
 </div>
 <script>
-const vids=["https://cdn.coverr.co/videos/coverr-aerial-view-of-city-1578755.mp4","https://cdn.coverr.co/videos/coverr-lion-1572.mp4","https://cdn.coverr.co/videos/coverr-car-in-the-desert-1565.mp4"];
-function getV(){let video=document.getElementById('v');video.src=vids[Math.floor(Math.random()*vids.length)];video.style.display='block';video.play();document.getElementById('s').innerText="✅ فيديو جاهز!";document.getElementById('d').style.display='block';}
-function down(){let a=document.createElement('a');a.href=document.getElementById('v').src;a.target='_blank';a.click();}
+function getV(){
+let q=document.getElementById('q').value.toLowerCase();
+let s=document.getElementById('s');
+let v=document.getElementById('v');
+s.innerText="⏳ بجيب ليك فيديو...";
+
+let cat="https://upload.wikimedia.org/wikipedia/commons/2/2c/Roaring_British_Lion_in_British_Video_Archive.mp4";
+let car="https://upload.wikimedia.org/wikipedia/commons/8/8f/Car_driving_on_road.mp4";
+let nature="https://upload.wikimedia.org/wikipedia/commons/4/4d/Waterfall_in_Sweden.mp4";
+let sea="https://upload.wikimedia.org/wikipedia/commons/8/89/Ocean_waves.mp4";
+let dog="https://upload.wikimedia.org/wikipedia/commons/c/c3/Dog_running.mp4";
+let def="https://upload.wikimedia.org/wikipedia/commons/8/89/Ocean_waves.mp4";
+
+if(q.includes("قط")||q.includes("cat")||q.includes("lion")||q.includes("أسد")) v.src=cat;
+else if(q.includes("سيار")||q.includes("car")||q.includes("عرب")) v.src=car;
+else if(q.includes("كلب")||q.includes("dog")) v.src=dog;
+else if(q.includes("بحر")||q.includes("sea")||q.includes("ocean")) v.src=sea;
+else v.src=nature;
+
+v.load(); v.play();
+s.innerText="✅ فيديو جاهز! بيتحرك هسي";
+}
 </script>
 </body>
 </html>
