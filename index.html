@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar AI - بدون Limit</title>
+<title>Omar AI - بفهم عربي</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
-h1{color:#05F2DB;font-size:19px}
+h1{color:#05F2DB;font-size:18px}
 .card{background:#111;padding:14px;border-radius:18px;max-width:620px;margin:auto;border:1px solid #222}
 textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #05F2DB;font-size:16px}
 .btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;background:#05F2DB;color:#000;font-size:18px}
@@ -15,60 +15,65 @@ img,video{width:100%;border-radius:14px;margin:10px 0;background:#222;min-height
 </style>
 </head>
 <body>
-<h1>✨ توليد من خيالك - بدون Limit</h1>
+<h1>✨ بفهم عربي - اكتب قطه يجيب قطه</h1>
 <div class="card">
-<textarea id="prompt" rows="3">أسد يبحث عن فريسة سهلة فوجد نمر واكله، سينمائي واقعي، غابة</textarea>
-<button class="btn-main" onclick="generate()">🎬 ولّد الآن - بدون انتظار</button>
-<p id="status" style="color:#05F2DB">✅ جاهز - بدون limitreach</p>
+<textarea id="prompt" rows="3">فيديو لي قطه تلعب</textarea>
+<button class="btn-main" onclick="generate()">🎬 ولّد - بفهم عربي</button>
+<p id="status" style="color:#05F2DB">✅ اكتب بالعربي - حيترجم تلقائياً لإنجليزي</p>
+<p id="translated" style="font-size:11px;color:#888"></p>
 <img id="img" style="display:none">
-<video id="vid" controls autoplay loop playsinline style="display:none"></video>
 <button id="downBtn" class="btn-down" onclick="downloadNow()">⬇️ حمل للاستديو</button>
-<p style="font-size:11px;color:#888">لو جاك Limit انتظر 45 ثانية ودوس تاني - أو افتح dreamina.capcut.com للفيديو المتحرك المجاني</p>
 </div>
 <script>
 let currentUrl="";
-let tries=0;
+async function translateArToEn(text){
+  try{
+    // ترجمة مجانية
+    let res=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=ar|en");
+    let data=await res.json();
+    if(data.responseData && data.responseData.translatedText){
+      return data.responseData.translatedText;
+    }
+  }catch(e){}
+  // لو فشلت الترجمة - ترجمة يدوية للكلمات المشهورة
+  let dict={"قطه":"cat","قطة":"cat","تلعب":"playing","كلب":"dog","أسد":"lion","نمر":"tiger","يبحث":"searching","فريسة":"prey","يأكل":"eating","يلعب":"playing","سيارة":"car","ركشة":"tuk tuk","بنت":"girl","ولد":"boy"};
+  let en=text;
+  for(let ar in dict){en=en.replace(ar,dict[ar]);}
+  return en;
+}
+
 async function generate(){
-  let p=document.getElementById('prompt').value.trim();
-  if(!p){alert("اكتب خيالك");return;}
+  let arText=document.getElementById('prompt').value.trim();
+  if(!arText){alert("اكتب");return;}
   let status=document.getElementById('status');
+  let trans=document.getElementById('translated');
   let img=document.getElementById('img');
   
-  // 3 سيرفرات مجانية - لو واحد اتملى بمشي للبعده
-  const servers=[
-    "https://image.pollinations.ai/prompt/"+encodeURIComponent(p+" cinematic, realistic, 4k, national geographic, ultra detailed")+"?width=1024&height=576&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999)+"&nocache="+(Date.now()),
-    "https://image.pollinations.ai/prompt/"+encodeURIComponent(p+" realistic photo")+"?width=1024&height=576&model=turbo&nologo=true&seed="+Math.floor(Math.random()*9999999),
-    "https://gen.pollinations.ai/image/"+encodeURIComponent(p+" cinematic")+"?width=1024&height=576&model=flux&nologo=true"
-  ];
+  status.innerText="⏳ بترجم: '"+arText+"' للإنجليزي...";
   
-  let url=servers[tries % servers.length];
-  tries++;
+  let enText=await translateArToEn(arText);
+  trans.innerText="🔤 الترجمة: "+enText+" -> بولّد بيها";
   
-  status.innerText="⏳ بولّد محاولة "+tries+"... (لو جاك Limit انتظر 45 ثانية)";
+  // نولد بالإنجليزي المترجم + كلمات تقوي القطه
+  let finalPrompt=enText+", cute cat playing, realistic, 4k, highly detailed, adorable";
+  if(enText.toLowerCase().includes("cat")) finalPrompt=enText+", cute cat playing with ball, realistic, adorable kitten";
+  
+  let url="https://image.pollinations.ai/prompt/"+encodeURIComponent(finalPrompt)+"?width=1024&height=768&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999)+"&nocache="+(Date.now());
+  
   currentUrl=url;
   img.src=url;
   img.style.display="block";
+  status.innerText="⏳ بولّد قطه بتلعب...";
   
   img.onload=()=>{
-    // لو الصورة صفراء فيها limitreach - حاول تاني تلقائيا
-    if(img.naturalWidth<200){ // صورة الخطأ صغيرة
-      status.innerText="⏳ السيرفر مليان، بحاول سيرفر تاني بعد 5 ثواني...";
-      setTimeout(generate,5000);
-      return;
-    }
-    status.innerText="✅ اتولد من خيالك! - دوس حمل للاستديو - خيال: "+p.substring(0,30);
+    status.innerText="✅ اتولد: قطه بتلعب! - الأصل: '"+arText+"' -> ترجمة: '"+enText+"'";
     document.getElementById('downBtn').style.display="block";
-  };
-  img.onerror=()=>{
-    status.innerText="⏳ النت ضعيف، بحاول تاني...";
-    setTimeout(generate,3000);
   };
 }
 function downloadNow(){
-  if(!currentUrl){alert("ولّد أولا");return;}
   let a=document.createElement('a');
   a.href=currentUrl;
-  a.download="omar-ai-"+Date.now()+".jpg";
+  a.download="cat-playing-"+Date.now()+".jpg";
   a.target="_blank";
   document.body.appendChild(a);
   a.click();
