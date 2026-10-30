@@ -3,114 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar - فيديو جوة الموقع</title>
+<title>Omar AI - توليد حقيقي من الخيال</title>
 <style>
-body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:8px}
-h1{color:#05F2DB;font-size:18px}
-.card{background:#111;padding:12px;border-radius:18px;max-width:600px;margin:auto;border:1px solid #222}
-input{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #444;text-align:center;font-size:16px}
-.row{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
-.btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
-.btn.active{background:#05F2DB;color:#000;font-weight:bold}
+body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
+h1{color:#05F2DB}
+.card{background:#111;padding:14px;border-radius:18px;max-width:600px;margin:auto;border:1px solid #222}
+input,textarea{width:94%;padding:12px;border-radius:12px;background:#222;color:#fff;border:1px solid #444;margin:6px 0;font-size:15px}
 .btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
-.btn-down{width:96%;padding:14px;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;border:none;font-size:16px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
-.thumb{background:#222;border-radius:12px;padding:6px;cursor:pointer;border:2px solid #333}
-.thumb:active{border-color:#05F2DB}
-.thumb img{width:100%;border-radius:8px;height:90px;object-fit:cover}
-.thumb p{font-size:11px;margin:4px 0;color:#ccc}
-iframe{width:100%;height:400px;border-radius:14px;margin:10px 0;border:2px solid #05F2DB;background:#000}
+.btn-down{width:96%;padding:14px;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;border:none;font-size:16px;display:none}
+video{width:100%;height:360px;border-radius:14px;margin:10px 0;background:#222}
 </style>
 </head>
 <body>
-<h1>🎬 Omar - الفيديو حيتولد هنا جوة الموقع</h1>
+<h1>✨ Omar AI - توليد فيديو من خيالك</h1>
 <div class="card">
-<input id="q" value="cat driving car" placeholder="اكتب: cat driving car">
-<div class="row">
-<span class="btn" id="b15" onclick="setD(15)">⚡ 15 ث</span>
-<span class="btn" id="b30" onclick="setD(30)">30 ث</span>
-<span class="btn active" id="b60" onclick="setD(60)">60 ث</span>
-<span class="btn" id="b0" onclick="setD(0)">كل المدد</span>
+<p style="font-size:12px;color:#888">ضع مفتاح fal.ai المجاني (مرة واحدة)</p>
+<input id="apikey" placeholder="fal_xxxx - جيبه من fal.ai" type="password">
+
+<textarea id="prompt" rows="3" placeholder="اكتب أي خيال: أسد سايق ركشة حمراء في سوق أمدرمان، لابس نظارة، 8 ثواني سينمائي"></textarea>
+
+<div style="display:flex;gap:6px;justify-content:center">
+<select id="duration" style="padding:8px;border-radius:20px;background:#222;color:#fff;border:1px solid #333">
+<option value="5">5 ثواني (أسرع)</option>
+<option value="10">10 ثواني</option>
+</select>
+<select id="model" style="padding:8px;border-radius:20px;background:#222;color:#fff;border:1px solid #333">
+<option value="fal-ai/kling-video/v1.6/standard/text-to-video">Kling 1.6 - أفضل حركة</option>
+<option value="fal-ai/luma-dream-machine">Luma Dream - سينمائي</option>
+<option value="fal-ai/hunyuan-video">Hunyuan - مجاني رخيص</option>
+</select>
 </div>
-<button class="btn-main" onclick="searchAll()">🔍 ولّد فيديو - جوة الموقع</button>
-<p id="s" style="color:#05F2DB;font-size:13px">✅ دوس ولّد - الفيديو حيشتغل في المربع الأسود الفوق - ما حيطلعك برة</p>
 
-<iframe id="player" src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?rel=0&playsinline=1&autoplay=0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+<button class="btn-main" onclick="generate()">🎬 ولّد فيديو من خيالي - توليد حقيقي</button>
+<p id="status" style="color:#05F2DB;font-size:13px">✅ اكتب أي شي تتخيله - حيتولد فيديو جديد ما موجود في يوتيوب</p>
 
-<button class="btn-down" onclick="downloadCurrent()">⬇️ حمل الفيديو الفوق للاستديو</button>
-<p id="dinfo" style="font-size:11px;color:#888">دوس على الصور التحت - الفيديو الفوق حيتغير طوالي</p>
+<video id="video" controls playsinline></video>
 
-<div id="results" class="grid"></div>
+<button id="downBtn" class="btn-down" onclick="downloadVideo()">⬇️ حمل للاستديو</button>
 </div>
 
 <script>
-let dur=60;
-let currentVideoId="5qap5aO4i9A";
-const APIS=["https://pipedapi.kavin.rocks","https://api.piped.private.coffee"];
+let currentVideoUrl=null;
 
-function setD(d){
-  dur=d;
-  document.querySelectorAll('[id^=b]').forEach(x=>x.classList.remove('active'));
-  document.getElementById('b'+d).classList.add('active');
-}
-
-async function searchAll(){
-  let q=document.getElementById('q').value.trim()||"cat driving car";
-  let s=document.getElementById('s');
-  let results=document.getElementById('results');
-  s.innerText="⏳ ببحث عن '"+q+"'...";
-  results.innerHTML="";
-
-  for(let api of APIS){
-   try{
-    let res=await fetch(api+"/search?q="+encodeURIComponent(q)+"&filter=videos");
+async function generate(){
+  let key=document.getElementById('apikey').value.trim();
+  let prompt=document.getElementById('prompt').value.trim();
+  if(!key){alert("دخل مفتاح fal.ai المجاني من fal.ai");return;}
+  if(!prompt){alert("اكتب خيالك!");return;}
+  
+  localStorage.setItem('fal_key',key);
+  let status=document.getElementById('status');
+  let video=document.getElementById('video');
+  status.innerText="⏳ بولّد: '"+prompt+"' - بياخد 2-4 دقائق...";
+  
+  try{
+    // 1. إرسال طلب التوليد
+    let model=document.getElementById('model').value;
+    let res=await fetch("https://queue.fal.run/"+model,{
+      method:"POST",
+      headers:{"Authorization":"Key "+key,"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:prompt,duration:document.getElementById('duration').value+"",aspect_ratio:"16:9"})
+    });
     let data=await res.json();
-    if(!data.items) continue;
-    let items=data.items.filter(it=>it.duration>0);
-    if(dur!=0){
-      items=items.filter(it=>{
-        let sec=it.duration||0;
-        if(dur==15) return sec>=3 && sec<=50;
-        if(dur==30) return sec>=15 && sec<=75;
-        if(dur==60) return sec>=20 && sec<=180;
-        return true;
-      });
-    }
-    if(items.length==0) continue;
-    items=items.slice(0,8);
+    let requestId=data.request_id;
+    if(!requestId){status.innerText="❌ خطأ: "+JSON.stringify(data);return;}
     
-    let first=items[0];
-    let firstId=first.url.replace("/watch?v=","");
-    currentVideoId=firstId;
-    document.getElementById('player').src="https://www.youtube-nocookie.com/embed/"+firstId+"?autoplay=1&rel=0&playsinline=1";
-    s.innerText="✅ اتولد "+items.length+" فيديو لـ '"+q+"' - دوس على أي صورة تحت عشان تشغلها فوق";
-
-    results.innerHTML=items.map(it=>{
-      let id=it.url.replace("/watch?v=","");
-      return `<div class="thumb" onclick="playId('${id}')">
-        <img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg">
-        <p>${it.title.substring(0,35)}...</p>
-        <p style="color:#05F2DB">▶️ ${Math.round(it.duration)}ث - دوس شغل</p>
-      </div>`;
-    }).join("");
-    return;
-   }catch(e){console.log(e);}
+    // 2. انتظار النتيجة (polling)
+    status.innerText="⏳ جاري التوليد... رقم الطلب: "+requestId+" - انتظر 2 دقيقة";
+    let resultUrl="https://queue.fal.run/fal-ai/kling-video/requests/"+requestId+"/status";
+    if(model.includes("luma")) resultUrl="https://queue.fal.run/"+model+"/requests/"+requestId+"/status";
+    
+    let tries=0;
+    while(tries<60){
+      await new Promise(r=>setTimeout(r,5000));
+      let sRes=await fetch(resultUrl,{headers:{"Authorization":"Key "+key}});
+      let sData=await sRes.json();
+      if(sData.status=="COMPLETED"){
+        let videoUrl=sData.response.video.url || sData.response.video_url;
+        currentVideoUrl=videoUrl;
+        video.src=videoUrl;
+        video.play();
+        status.innerText="✅ اتولد! '"+prompt+"' - فيديو جديد من خيالك";
+        document.getElementById('downBtn').style.display="block";
+        return;
+      }else if(sData.status=="FAILED"){
+        status.innerText="❌ فشل: "+JSON.stringify(sData);
+        return;
+      }
+      status.innerText="⏳ لسه بولّد... "+(tries*5)+" ثانية - "+sData.status;
+      tries++;
+    }
+  }catch(e){
+    status.innerText="❌ خطأ شبكة: "+e.message+" - جرب VPN لو في السودان";
   }
-  s.innerText="❌ النت ضعيف، جرب تاني";
 }
 
-function playId(id){
-  currentVideoId=id;
-  document.getElementById('player').src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";
-  window.scrollTo({top:0,behavior:'smooth'});
-  document.getElementById('s').innerText="▶️ شغال: "+id+" - دوس تحميل عشان تحفظه";
+function downloadVideo(){
+  if(!currentVideoUrl){alert("ولّد أولاً");return;}
+  let a=document.createElement('a');
+  a.href=currentVideoUrl;
+  a.download="omar-ai-"+Date.now()+".mp4";
+  a.target="_blank";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
-function downloadCurrent(){
-  if(!currentVideoId){alert("ولّد فيديو أولاً!");return;}
-  // موقع تحميل شغال في السودان وبحفظ في الاستديو
-  window.open("https://ssyoutube.com/watch?v="+currentVideoId,"_blank");
-  document.getElementById('dinfo').innerText="✅ اتفتح موقع التحميل - دوس Download MP4 - حينزل في الاستديو > الفيديوهات";
+// حفظ المفتاح
+window.onload=()=>{
+  let k=localStorage.getItem('fal_key');
+  if(k) document.getElementById('apikey').value=k;
 }
 </script>
 </body>
