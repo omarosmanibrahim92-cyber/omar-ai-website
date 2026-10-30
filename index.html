@@ -1,1 +1,166 @@
-<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Omar AI - مربح</title><style>body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:0}.header{background:#111;padding:12px;position:sticky;top:0;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}.credits{background:#05F2DB;color:#000;padding:6px 12px;border-radius:20px;font-weight:bold;font-size:13px}h1{color:#05F2DB;font-size:18px;margin:10px 0}.card{background:#151515;padding:14px;border-radius:18px;max-width:620px;margin:10px auto;border:1px solid #222}textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #333;font-size:15px}.btn-main{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:17px}.btn-pay{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;font-size:16px;display:none}img,video{width:100%;border-radius:14px;margin:10px 0;background:#222;min-height:340px;object-fit:cover;display:none}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99;padding:20px;box-sizing:border-box}.modal-box{background:#1a1a1a;padding:20px;border-radius:18px;max-width:400px;margin:40px auto;border:1px solid #333}.small{font-size:11px;color:#888}</style></head><body><div class="header"><span style="font-weight:bold">🤖 Omar AI</span><span class="credits" id="creditBadge">💎 3 مجاناً</span></div><h1>✨ حول خيالك لفيديو</h1><div class="card"><textarea id="prompt" rows="3">فيديو لي قطه تلعب بكورة صفراء</textarea><button class="btn-main" onclick="generate()">🎬 ولّد فيديو من خيالي</button><p id="status" style="color:#05F2DB;font-size:13px">✅ ليك 3 فيديو مجاناً</p><p id="trans" style="font-size:11px;color:#666"></p><img id="img"><video id="vid" controls autoplay loop playsinline></video><button id="downBtn" class="btn-main" style="display:none;background:#fff;color:#000" onclick="downloadNow()">⬇️ حمل للاستديو</button><button id="payBtn" class="btn-pay" onclick="showPay()">🔓 خلصت المجاني - اشتري</button><p class="small">من خيالك - ما بجيب من يوتيوب</p></div><div class="modal" id="payModal"><div class="modal-box"><h3 style="color:#05F2DB">💰 باقات Omar AI</h3><p style="font-size:14px">رصيدك خلص!</p><div style="text-align:right;background:#222;padding:10px;border-radius:12px;margin:8px 0"><b>🔹 10 فيديو = 2,000 جنيه</b><br><b>🔹 50 فيديو = 7,000 جنيه</b><br><b>🔹 100 فيديو = 10,000 جنيه</b></div><p style="font-size:13px;color:#05F2DB">حول بنكك على:<br><b style="font-size:18px">1234567 - عمر عثمان</b></p><button class="btn-main" style="background:#25D366;color:#fff" onclick="openWhatsApp()">📱 أرسل إيصال بنكك - واتساب</button><input id="unlockCode" placeholder="كود التفعيل بعد الدفع" style="width:90%;padding:10px;border-radius:8px;background:#111;color:#fff;border:1px solid #333;margin:8px 0"><button class="btn-main" style="background:#fff;color:#000" onclick="unlock()">✅ فعّل رصيدي</button><button onclick="hidePay()" style="background:none;border:none;color:#888;margin-top:8px">إغلاق</button></div></div><script>let credits=parseInt(localStorage.getItem('omar_credits')||'3');let currentUrl="";updateBadge();function updateBadge(){let b=document.getElementById('creditBadge');if(credits>0){b.innerText="💎 "+credits+" مجاناً";b.style.background="#05F2DB";}else{b.innerText="🔒 خلص";b.style.background="#ff0050";b.style.color="#fff";}document.getElementById('payBtn').style.display=credits<=0?"block":"none";}async function translateArToEn(t){try{let r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(t)+"&langpair=ar|en");let d=await r.json();return d.responseData.translatedText||t;}catch(e){return t;}}async function generate(){let ar=document.getElementById('prompt').value.trim();if(!ar){alert("اكتب خيالك");return;}if(credits<=0){showPay();return;}let status=document.getElementById('status');let trans=document.getElementById('trans');let img=document.getElementById('img');let vid=document.getElementById('vid');status.innerText="⏳ بترجم...";let en=await translateArToEn(ar);trans.innerText="🔤 "+en;credits--;localStorage.setItem('omar_credits',credits);updateBadge();status.innerText="⏳ بولّد: "+ar+" ... باقي "+credits;let finalPrompt=en+", realistic, cute, 4k";let url="https://image.pollinations.ai/prompt/"+encodeURIComponent(finalPrompt)+"?width=1024&height=768&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999);currentUrl=url;img.src=url;img.style.display="block";vid.style.display="none";img.onload=()=>{status.innerText="✅ اتولد! باقي ليك "+credits;document.getElementById('downBtn').style.display="block";if(credits==0){showPay();}};}function downloadNow(){if(!currentUrl){alert("ولّد أولا");return;}let a=document.createElement('a');a.href=currentUrl;a.download="omar-ai-"+Date.now()+".jpg";a.target="_blank";document.body.appendChild(a);a.click();document.body.removeChild(a);}function showPay(){document.getElementById('payModal').style.display="block";}function hidePay(){document.getElementById('payModal').style.display="none";}function openWhatsApp(){let msg=encodeURIComponent("سلام Omar AI - حولت بنكك");window.open("https://wa.me/249900000000?text="+msg,"_blank");}function unlock(){let code=document.getElementById('unlockCode').value.trim();if(code=="OMAR10"){credits+=10;alert("+10");}else if(code=="OMAR50"){credits+=50;alert("+50");}else if(code=="OMAR100"){credits+=100;alert("+100");}else if(code=="FREE3"){credits+=3;alert("+3");}else{alert("كود غلط");return;}localStorage.setItem('omar_credits',credits);updateBadge();hidePay();document.getElementById('status').innerText="✅ تم! باقي "+credits;}</script></body></html>
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omar AI - مولد الصور بالعربي</title>
+<meta name="description" content="Omar AI - ولد اي صورة من خيالك بالعربي مجانا">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:#fff;font-family:system-ui;text-align:center;padding:0}
+.header{padding:14px;background:#111;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #00ffcc33;position:sticky;top:0;z-index:10}
+.logo{font-weight:bold;color:#00ffcc}
+.credits{background:#00ffcc;color:#000;padding:6px 14px;border-radius:20px;font-weight:bold;font-size:13px}
+.card{background:#111;padding:16px;border-radius:20px;max-width:620px;margin:14px auto;border:1px solid #222}
+textarea{width:100%;padding:14px;border-radius:14px;background:#1e1e1e;color:#fff;border:2px solid #00ffcc;font-size:16px;outline:none}
+.btn{width:100%;padding:16px;border:none;border-radius:30px;font-weight:bold;font-size:18px;cursor:pointer;margin:8px 0}
+.btn-gen{background:#00ffcc;color:#000}
+.btn-watch{background:#ffeb3b;color:#000;animation:pulse 1.2s infinite;display:none}
+.btn-share{background:#222;color:#fff;border:1px solid #333}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.result{margin:14px auto;max-width:620px}
+.result img{width:100%;border-radius:16px;min-height:300px;background:#111;object-fit:cover}
+.footer{font-size:11px;color:#666;padding:20px;line-height:1.8}
+.footer a{color:#00ffcc;text-decoration:none}
+.ad-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.96);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.ad-box{background:#161616;border:2px solid #00ffcc;border-radius:22px;padding:20px;max-width:400px;width:92%}
+.timer{background:#00ffcc;color:#000;padding:6px 16px;border-radius:20px;font-weight:bold;display:inline-block;margin:10px}
+.ad-click{background:#00ffcc;color:#000;width:100%;padding:14px;border:none;border-radius:14px;font-weight:bold;font-size:16px;cursor:pointer;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="header">
+<span class="logo">🤖 Omar AI</span>
+<span class="credits" id="creditTop">3 صور</span>
+</div>
+
+<div class="card">
+<h2 style="margin:6px 0;color:#00ffcc">اكتب بالعربي - يولد ليك طوالي</h2>
+<p style="font-size:12px;color:#aaa">مثال: قطة تلعب، اسد في الصحراء، ركشة سودانية</p>
+<textarea id="prompt" rows="3" placeholder="فيديو لي قطة تلعب كورة..."></textarea>
+<button class="btn btn-gen" id="genBtn" onclick="generate()">✨ ولد الصورة</button>
+<button class="btn btn-watch" id="watchBtn" onclick="openAdOverlay()">🎬 شاهد إعلان 15 ثانية +1 صورة مجانية</button>
+<p id="status" style="color:#00ffcc;font-size:13px"></p>
+<p id="translated" style="color:#666;font-size:11px"></p>
+</div>
+
+<div class="result" id="result"></div>
+
+<div class="ad-overlay" id="adOverlay">
+<div class="ad-box">
+<h3 style="color:#00ffcc;margin-top:0">🎥 ادعم Omar AI</h3>
+<p style="font-size:13px;color:#aaa">شاهد اعلان 5 ثواني عشان نقدر نخلي التطبيق مجاني</p>
+
+<button class="ad-click" onclick="clickAd()">👆 اضغط هنا لفتح الإعلان (اربح)</button>
+
+<div class="timer" id="adTimer">15 ثانية</div>
+<p style="font-size:11px;color:#888" id="waitText">اضغط الزر فوق اولاً ثم انتظر</p>
+<button id="claimBtn" class="btn btn-gen" style="display:none" onclick="claimReward()">✅ استلم صورتك المجانية</button>
+<button onclick="closeAd()" style="background:none;border:none;color:#666;margin-top:10px">اغلاق</button>
+</div>
+</div>
+
+<div class="card">
+<button class="btn btn-share" onclick="shareApp()">🔗 شارك التطبيق مع اصحابك +2 صور هدية</button>
+<p style="font-size:11px;color:#555">كل ما تشارك التطبيق بينتشر اسرع</p>
+</div>
+
+<div class="footer">
+<a href="#" onclick="showPrivacy()">سياسة الخصوصية</a> | Omar AI 2026<br>
+التطبيق لا يجمع بيانات شخصية. الصور يتم توليدها عبر خدمة خارجية.<br>
+الإعلانات تظهر فقط بموافقتك (عند الضغط على زر المشاهدة).
+<div id="privacy" style="display:none;text-align:right;background:#111;padding:14px;border-radius:14px;margin-top:14px;font-size:12px;color:#ccc">
+<b>سياسة الخصوصية:</b><br>
+1. لا نجمع اسماء او صور.<br>
+2. لا نبيع بيانات.<br>
+3. نستخدم رابط اعلاني من Adsterra يفتح فقط عند ضغطك.<br>
+4. للتواصل: omar.app.contact@gmail.com
+</div>
+</div>
+
+<script>
+const AD_LINK = "https://asiafilm.org/4/75b0210cfca5e17b2ff21efe527a9072";
+let credits = parseInt(localStorage.getItem('omar_credits') || '3');
+let adClicked = false;
+
+function updateCredits(){
+ document.getElementById('creditTop').innerText = credits + ' صورة';
+ localStorage.setItem('omar_credits', credits);
+ if(credits<=0){
+  document.getElementById('genBtn').style.display='none';
+  document.getElementById('watchBtn').style.display='block';
+  document.getElementById('creditTop').innerText='0 - شاهد اعلان';
+  document.getElementById('creditTop').style.background='#ffeb3b';
+ }else{
+  document.getElementById('genBtn').style.display='block';
+  document.getElementById('watchBtn').style.display='none';
+  document.getElementById('creditTop').style.background='#00ffcc';
+ }
+}
+updateCredits();
+
+async function translateArToEn(text){
+ try{
+  let r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=ar|en");
+  let d=await r.json();
+  if(d.responseData && d.responseData.translatedText) return d.responseData.translatedText;
+ }catch(e){}
+ return text;
+}
+
+async function generate(){
+ if(credits<=0){openAdOverlay();return;}
+ let ar = document.getElementById('prompt').value.trim();
+ if(!ar){alert('اكتب وصف اول');return;}
+ document.getElementById('status').innerText='⏳ بترجم...';
+ let en = await translateArToEn(ar);
+ document.getElementById('translated').innerText='🔤 '+en;
+ document.getElementById('status').innerText='🎨 بولد: '+ar;
+ credits--; updateCredits();
+ let url = "https://image.pollinations.ai/prompt/"+encodeURIComponent(en+", highly detailed, 4k, realistic")+"?width=1024&height=1024&nologo=true&seed="+Date.now();
+ document.getElementById('result').innerHTML = '<p>⏳ جاري التوليد...</p><img id="genImg" src="'+url+'" onload="document.getElementById(\'status\').innerText=\'✅ جاهز!\'"><br><button class=\'btn btn-gen\' onclick=\'downloadImg()\'>⬇️ تحميل</button><button class=\'btn btn-share\' onclick=\'shareImg()\'>📤 مشاركة الصورة</button>';
+}
+
+function openAdOverlay(){
+ document.getElementById('adOverlay').style.display='flex';
+ adClicked=false;
+ let t=15;
+ document.getElementById('adTimer').innerText=t+' ثانية';
+ document.getElementById('claimBtn').style.display='none';
+ document.getElementById('waitText').innerText='اضغط زر الاعلان فوق ثم انتظر';
+ let iv=setInterval(()=>{
+  t--; document.getElementById('adTimer').innerText=t+' ثانية';
+  if(t<=0){clearInterval(iv); if(adClicked){document.getElementById('claimBtn').style.display='block';document.getElementById('waitText').innerText='مبروك! استلم هديتك';}else{document.getElementById('waitText').innerText='لازم تضغط زر الاعلان اولاً';document.getElementById('adTimer').innerText='اضغط الاعلان';}}
+ },1000);
+}
+
+function clickAd(){
+ adClicked=true;
+ window.open(AD_LINK,'_blank');
+ document.getElementById('waitText').innerText='شكرا! انتظر 5 ثواني وانت تربح ❤️';
+}
+
+function claimReward(){
+ if(!adClicked){alert('لازم تضغط زر الاعلان اول');return;}
+ credits+=1; updateCredits();
+ document.getElementById('adOverlay').style.display='none';
+ alert('✅ خدت صورة! رصيدك: '+credits);
+}
+
+function closeAd(){document.getElementById('adOverlay').style.display='none';}
+
+function downloadImg(){
+ let img=document.getElementById('genImg'); if(!img) return;
+ let a=document.createElement('a'); a.href=img.src; a.target='_blank'; a.download='omar-ai-'+Date.now()+'.jpg'; a.click();
+}
+function shareApp(){
+ if(navigator.share){navigator.share({title:'Omar AI',text:'جرب تطبيق Omar AI بولد صور بالعربي مجانا',url:location.href}); credits+=2; updateCredits();}else{prompt('انسخ الرابط وشاركو:',location.href); credits+=2; updateCredits();}
+}
+function shareImg(){
+ let img=document.getElementById('genImg'); if(!img) return;
+ if(navigator.share){navigator.share({title:'صورتي من Omar AI',url:img.src});}else{prompt('رابط الصورة:',img.src);}
+}
+function showPrivacy(){let p=document.getElementById('privacy'); p.style.display = p.style.display=='none'?'block':'none';}
+</script>
+</body>
+</html>
