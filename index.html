@@ -3,130 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar AI - توليد حقيقي بدون مفتاح</title>
+<title>Omar AI - بدون Limit</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
 h1{color:#05F2DB;font-size:19px}
 .card{background:#111;padding:14px;border-radius:18px;max-width:620px;margin:auto;border:1px solid #222}
-textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #444;font-size:16px}
-.btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
+textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #05F2DB;font-size:16px}
+.btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;background:#05F2DB;color:#000;font-size:18px}
 .btn-down{width:96%;padding:14px;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;border:none;font-size:16px;display:none}
-video,img{width:100%;height:380px;border-radius:14px;margin:10px 0;background:#222;object-fit:cover}
-.small{font-size:11px;color:#888}
+img,video{width:100%;border-radius:14px;margin:10px 0;background:#222;min-height:350px;object-fit:cover}
 </style>
 </head>
 <body>
-<h1>✨ توليد فيديو من خيالك - بدون مفتاح</h1>
+<h1>✨ توليد من خيالك - بدون Limit</h1>
 <div class="card">
-<textarea id="prompt" rows="4">أسد يبحث عن فريسة سهلة فوجد نمر واكله، تصوير سينمائي واقعي في غابة، حركة بطيئة</textarea>
-
-<div style="display:flex;gap:6px;justify-content:center;margin:8px">
-<select id="mode" style="padding:8px;border-radius:20px;background:#222;color:#fff;border:1px solid #333">
-<option value="free">🆓 مجاني - بدون مفتاح (صورة + تحريك)</option>
-<option value="fal">🔑 fal.ai - فيديو حقيقي (بمفتاح)</option>
-</select>
+<textarea id="prompt" rows="3">أسد يبحث عن فريسة سهلة فوجد نمر واكله، سينمائي واقعي، غابة</textarea>
+<button class="btn-main" onclick="generate()">🎬 ولّد الآن - بدون انتظار</button>
+<p id="status" style="color:#05F2DB">✅ جاهز - بدون limitreach</p>
+<img id="img" style="display:none">
+<video id="vid" controls autoplay loop playsinline style="display:none"></video>
+<button id="downBtn" class="btn-down" onclick="downloadNow()">⬇️ حمل للاستديو</button>
+<p style="font-size:11px;color:#888">لو جاك Limit انتظر 45 ثانية ودوس تاني - أو افتح dreamina.capcut.com للفيديو المتحرك المجاني</p>
 </div>
-
-<input id="apikey" placeholder="لو عندك مفتاح fal.ai ضعه هنا (اختياري)" type="password" style="width:94%;padding:10px;border-radius:12px;background:#222;color:#fff;border:1px solid #333">
-
-<button class="btn-main" onclick="generate()">🎬 ولّد من خيالي الآن</button>
-<p id="status" style="color:#05F2DB;font-size:13px">✅ اكتب أي خيال - حيتولد طوالي بدون يوتيوب</p>
-
-<img id="image" style="display:none">
-<video id="video" controls autoplay loop playsinline style="display:none"></video>
-
-<button id="downBtn" class="btn-down" onclick="downloadCurrent()">⬇️ حمل للاستديو</button>
-<p class="small">المجاني بستخدم Pollinations AI - توليد حقيقي من خيالك، ما بجيب من يوتيوب</p>
-
-<p style="margin-top:12px;font-size:12px;color:#aaa">لو داير فيديو احترافي متحرك:<br>1. افتح fal.ai وسجل (دقيقة) وانسخ المفتاح<br>2. أو افتح dreamina.capcut.com - مجاني 100% وبدون كود</p>
-</div>
-
 <script>
-let currentUrl=null;
-
+let currentUrl="";
+let tries=0;
 async function generate(){
-  let prompt=document.getElementById('prompt').value.trim();
-  let mode=document.getElementById('mode').value;
-  let key=document.getElementById('apikey').value.trim();
-  if(!prompt){alert("اكتب خيالك");return;}
-  
-  if(key) localStorage.setItem('fal_key',key);
+  let p=document.getElementById('prompt').value.trim();
+  if(!p){alert("اكتب خيالك");return;}
   let status=document.getElementById('status');
-  let img=document.getElementById('image');
-  let video=document.getElementById('video');
+  let img=document.getElementById('img');
   
-  // لو عنده مفتاح fal - استخدم التوليد الحقيقي
-  if(mode=="fal" && key){
-    status.innerText="⏳ بولّد ب fal.ai: '"+prompt+"' - 2-4 دقائق...";
-    try{
-      let res=await fetch("https://queue.fal.run/fal-ai/kling-video/v1.6/standard/text-to-video",{
-        method:"POST",
-        headers:{"Authorization":"Key "+key,"Content-Type":"application/json"},
-        body:JSON.stringify({prompt:prompt,duration:"5",aspect_ratio:"16:9"})
-      });
-      let data=await res.json();
-      let requestId=data.request_id;
-      if(!requestId){status.innerText="❌ خطأ: "+JSON.stringify(data);return;}
-      let tries=0;
-      while(tries<40){
-        await new Promise(r=>setTimeout(r,6000));
-        let sRes=await fetch("https://queue.fal.run/fal-ai/kling-video/requests/"+requestId+"/status",{headers:{"Authorization":"Key "+key}});
-        let sData=await sRes.json();
-        if(sData.status=="COMPLETED"){
-          currentUrl=sData.response.video.url;
-          video.src=currentUrl; video.style.display="block"; img.style.display="none"; video.play();
-          status.innerText="✅ اتولد فيديو حقيقي من خيالك!";
-          document.getElementById('downBtn').style.display="block";
-          return;
-        }
-        status.innerText="⏳ بولّد... "+(tries*6)+"ث";
-        tries++;
-      }
-    }catch(e){status.innerText="❌ خطأ: "+e.message;}
-    return;
-  }
+  // 3 سيرفرات مجانية - لو واحد اتملى بمشي للبعده
+  const servers=[
+    "https://image.pollinations.ai/prompt/"+encodeURIComponent(p+" cinematic, realistic, 4k, national geographic, ultra detailed")+"?width=1024&height=576&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999)+"&nocache="+(Date.now()),
+    "https://image.pollinations.ai/prompt/"+encodeURIComponent(p+" realistic photo")+"?width=1024&height=576&model=turbo&nologo=true&seed="+Math.floor(Math.random()*9999999),
+    "https://gen.pollinations.ai/image/"+encodeURIComponent(p+" cinematic")+"?width=1024&height=576&model=flux&nologo=true"
+  ];
   
-  // الوضع المجاني - بدون مفتاح - Pollinations AI
-  status.innerText="⏳ بولّد مجاناً: '"+prompt+"' - 10 ثواني...";
-  try{
-    // 1. ولّد صورة من الخيال مجاناً بدون مفتاح
-    let imageUrl="https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt+" cinematic, realistic, 4k, highly detailed")+"?width=1024&height=576&model=flux&nologo=true&seed="+Math.floor(Math.random()*10000);
-    img.src=imageUrl;
-    img.style.display="block";
-    video.style.display="none";
-    currentUrl=imageUrl;
-    
-    img.onload=()=>{
-      status.innerText="✅ اتولدت صورة من خيالك! - دوس تحميل للاستديو - لو داير فيديو متحرك استخدم dreamina.capcut.com أو حط مفتاح fal.ai";
-      document.getElementById('downBtn').style.display="block";
-    };
-    
-    // حاول توليد فيديو مجاني (Alpha)
-    try{
-      let videoPromptUrl="https://gen.pollinations.ai/image/"+encodeURIComponent(prompt+" video, motion")+"?model=turbo";
-      // هذا للتجربة - لو فشل بنبقى على الصورة
-    }catch(e){}
-    
-  }catch(e){
-    status.innerText="❌ النت ضعيف، جرب تاني";
-  }
+  let url=servers[tries % servers.length];
+  tries++;
+  
+  status.innerText="⏳ بولّد محاولة "+tries+"... (لو جاك Limit انتظر 45 ثانية)";
+  currentUrl=url;
+  img.src=url;
+  img.style.display="block";
+  
+  img.onload=()=>{
+    // لو الصورة صفراء فيها limitreach - حاول تاني تلقائيا
+    if(img.naturalWidth<200){ // صورة الخطأ صغيرة
+      status.innerText="⏳ السيرفر مليان، بحاول سيرفر تاني بعد 5 ثواني...";
+      setTimeout(generate,5000);
+      return;
+    }
+    status.innerText="✅ اتولد من خيالك! - دوس حمل للاستديو - خيال: "+p.substring(0,30);
+    document.getElementById('downBtn').style.display="block";
+  };
+  img.onerror=()=>{
+    status.innerText="⏳ النت ضعيف، بحاول تاني...";
+    setTimeout(generate,3000);
+  };
 }
-
-function downloadCurrent(){
-  if(!currentUrl){alert("ولّد أولاً");return;}
+function downloadNow(){
+  if(!currentUrl){alert("ولّد أولا");return;}
   let a=document.createElement('a');
   a.href=currentUrl;
-  a.download="omar-ai-imagination-"+Date.now()+(currentUrl.includes(".mp4")?".mp4":".jpg");
+  a.download="omar-ai-"+Date.now()+".jpg";
   a.target="_blank";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  document.getElementById('status').innerText="✅ بدأ التحميل - حتلقاه في الاستديو";
-}
-
-window.onload=()=>{
-  let k=localStorage.getItem('fal_key');
-  if(k) document.getElementById('apikey').value=k;
 }
 </script>
 </body>
