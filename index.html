@@ -3,91 +3,96 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar - بحث حر حقيقي</title>
+<title>Omar - بحث حر غير محدود</title>
 <style>
 body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}
-h1{color:#05F2DB;font-size:20px}
-.card{background:#111;padding:14px;border-radius:18px;max-width:580px;margin:10px auto;border:1px solid #222}
-input{width:92%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center;font-size:16px}
+h1{color:#05F2DB}
+.card{background:#111;padding:14px;border-radius:18px;max-width:620px;margin:auto;border:1px solid #222}
+input{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:1px solid #333;text-align:center;font-size:16px}
 .row{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
 .btn{padding:8px 14px;border-radius:20px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:13px}
 .btn.active{background:#05F2DB;color:#000;font-weight:bold}
 .btn-main{width:96%;padding:14px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:16px}
-iframe{width:100%;height:500px;border-radius:14px;margin:10px 0;border:0;background:#000}
-.note{font-size:12px;color:#888}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.thumb{background:#222;border-radius:12px;padding:6px;cursor:pointer;border:1px solid #333}
+.thumb img{width:100%;border-radius:8px;height:90px;object-fit:cover}
+.thumb p{font-size:11px;margin:4px 0;color:#ccc}
+iframe{width:100%;height:360px;border-radius:14px;margin:10px 0;border:0;background:#000}
 </style>
 </head>
 <body>
-<h1>🔍 Omar - بحث حر من كل المنصات</h1>
+<h1>🔍 Omar - بحث حر عن أي شي</h1>
 <div class="card">
-<input id="q" placeholder="ابحث عن أي شي: أسد سايق سيارة، قطة بتطبخ...">
+<input id="q" placeholder="اكتب أي شي: فيل سايق موتر، قطة بتطبخ، زول برقص في البحر...">
 <div class="row">
 <span class="btn active" id="b15" onclick="setD(15)">⚡ 15 ث</span>
-<span class="btn" id="b30" onclick="setD(30)">⏱️ 30 ث</span>
-<span class="btn" id="b60" onclick="setD(60)">🎥 60 ث</span>
+<span class="btn" id="b30" onclick="setD(30)">30 ث</span>
+<span class="btn" id="b60" onclick="setD(60)">60 ث</span>
 <span class="btn" id="b0" onclick="setD(0)">كل المدد</span>
 </div>
-<button class="btn-main" onclick="searchAll()">🔍 ابحث الآن - أي كلمة + أي مدة</button>
+<button class="btn-main" onclick="searchAll()">🔍 ابحث عن أي كلمة - غير محدود</button>
+<p id="s" style="color:#05F2DB;font-size:13px">✅ اكتب أي جملة في العالم - الموقع يجيب فيديوهات مطابقة + المدة مطابقة</p>
+<iframe id="v" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+<div id="results" class="grid"></div>
 <div class="row">
-<button class="btn" onclick="openTik()" style="border-color:#ff0050">🎵 افتح نفس البحث في TikTok</button>
-<button class="btn" onclick="openFB()" style="border-color:#1877F2">📘 افتح في Facebook Reels</button>
+<button class="btn" onclick="openTik()" style="border-color:#ff0050">🎵 نفس البحث في TikTok</button>
+<button class="btn" onclick="openFB()" style="border-color:#1877F2">📘 نفس البحث في FB Reels</button>
 </div>
-<p id="s" style="color:#05F2DB;font-size:13px">✅ اكتب أي جملة - الموقع حيجيب فيديو مطابق بالمدة والوصف</p>
-<iframe id="v" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-<p class="note" id="info">المصدر: YouTube + TikTok + FB عبر Piped API - شغال في السودان</p>
 </div>
 <script>
-let dur=15;
-let lastQuery="أسد سايق سيارة";
-const PIPED_INSTANCES=[
-"https://pipedapi.kavin.rocks",
-"https://api.piped.private.coffee",
-"https://pipedapi.adminforge.de"
-];
-function setD(d){
-dur=d;
-document.querySelectorAll('[id^=b]').forEach(x=>x.classList.remove('active'));
-document.getElementById('b'+d).classList.add('active');
-}
+let dur=15;let lastQuery="";
+const APIS=["https://pipedapi.kavin.rocks","https://api.piped.private.coffee","https://pipedapi.adminforge.de"];
+function setD(d){dur=d;document.querySelectorAll('[id^=b]').forEach(x=>x.classList.remove('active'));document.getElementById('b'+d).classList.add('active');}
 async function searchAll(){
-let q=document.getElementById('q').value.trim()||"أسد سايق سيارة";
+let q=document.getElementById('q').value.trim();
+if(!q){alert("اكتب أي حاجة عايزها!");return;}
 lastQuery=q;
 let s=document.getElementById('s');
-let v=document.getElementById('v');
-s.innerText="⏳ ببحث عن '"+q+"' بمدة "+(dur==0?"مفتوحة":dur+" ث")+" في كل المنصات...";
+let results=document.getElementById('results');
+s.innerText="⏳ ببحث عن '"+q+"' - المدة "+(dur==0?"مفتوحة":dur+" ث")+" - بحث حر...";
+results.innerHTML="";
 
-let foundId=null;
-for(let api of PIPED_INSTANCES){
+for(let api of APIS){
  try{
   let res=await fetch(api+"/search?q="+encodeURIComponent(q)+"&filter=videos");
   let data=await res.json();
-  if(!data.items) continue;
+  if(!data.items || data.items.length==0) continue;
   let items=data.items;
+  
   // فلتر بالمدة
   if(dur!=0){
     items=items.filter(it=>{
       let sec=it.duration||0;
-      if(dur==15) return sec>=5 && sec<=35;
-      if(dur==30) return sec>=25 && sec<=45;
-      if(dur==60) return sec>=50 && sec<=75;
+      if(dur==15) return sec>=3 && sec<=45;
+      if(dur==30) return sec>=20 && sec<=60;
+      if(dur==60) return sec>=40 && sec<=90;
       return true;
     });
   }
-  if(items.length>0){
-    foundId=items[0].url.replace("/watch?v=","");
-    break;
-  }
- }catch(e){console.log("API failed",api);}
+  // اعرض أول 6 نتائج مطابقة - المستخدم يختار
+  items=items.slice(0,6);
+  if(items.length==0){s.innerText="⚠️ ما لقيت مدة "+dur+"ث لـ '"+q+"' - جرب كل المدد"; continue;}
+  
+  // شغل أول واحد تلقائي
+  let first=items[0];
+  document.getElementById('v').src="https://www.youtube-nocookie.com/embed/"+first.url.replace("/watch?v=","")+"?autoplay=1&rel=0&playsinline=1";
+  s.innerText="✅ لقيت "+items.length+" فيديو مطابق لـ '"+q+"' - اختار من تحت";
+  
+  // اعرض كل النتائج كصور مصغرة
+  results.innerHTML=items.map(it=>{
+    let id=it.url.replace("/watch?v=","");
+    return `<div class="thumb" onclick="playId('${id}')">
+      <img src="https://i.ytimg.com/vi/${id}/mqdefault.jpg">
+      <p>${it.title.substring(0,35)}...</p>
+      <p style="color:#05F2DB">${it.duration}s - ${it.uploaderName||''}</p>
+    </div>`;
+  }).join("");
+  return;
+ }catch(e){console.log("fail",api);}
 }
-if(foundId){
- v.src="https://www.youtube.com/embed/"+foundId+"?autoplay=1&rel=0";
- s.innerText="✅ لقيت: '"+q+"' - مدة مطابقة "+dur+"ث - فيديو: "+foundId;
-}else{
- // fallback - فيديو مطابق تقريبي
- v.src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1";
- s.innerText="⚠️ ما لقيت مدة مطابقة بالضبط، جبت أقرب فيديو لـ '"+q+"' - جرب كلمة تانية";
+s.innerText="❌ ما لقيت '"+q+"' - جرب تكتبها بالإنجليزي مثلا: cat driving car";
 }
-}
+function playId(id){document.getElementById('v').src="https://www.youtube-nocookie.com/embed/"+id+"?autoplay=1&rel=0&playsinline=1";}
 function openTik(){window.open("https://www.tiktok.com/search?q="+encodeURIComponent(lastQuery),"_blank");}
 function openFB(){window.open("https://www.facebook.com/reels/search/?q="+encodeURIComponent(lastQuery),"_blank");}
 </script>
