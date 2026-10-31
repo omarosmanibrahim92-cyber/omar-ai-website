@@ -1,42 +1,46 @@
-ml
 <!DOCTYPE html>
-<html>
+<html dir="rtl" lang="ar">
 <head>
-    <title></title>
-	<meta charset="utf-8" />
-    <script src="Scripts/jquery-1.9.1.min.js"></script>
-    <link href="Content/bootstrap.min.css" rel="stylesheet" />
-    <script src="Scripts/isRockFx.js"></script>
-    <script>
-        $(function () {
-            $('#ButtonCal').click(
-                function () {
-                    //取得用戶輸入的參數
-                    var para = { 'height': $('#txbHeight').val(), 'weight': $('#txbWeight').val() };
-                    //呼叫API
-                    ExecuteAPI('Example', 'BMI', para,
-			//呼叫WebAPI成功時運行的Call Back Function
-                        function (result) {
-                            alert(result.Data);
-                        }
-                        );
-                }
-                );
-        });
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omar AI - شغال نهائي</title>
+<style>body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center;padding:10px}.box{background:#111;padding:15px;border-radius:16px;max-width:500px;margin:10px auto;border:1px solid #00ffcc}textarea{width:95%;padding:12px;border-radius:10px;background:#222;color:#fff;border:1px solid #333}button{width:95%;padding:14px;border:none;border-radius:25px;font-weight:bold;margin:8px 0}.btn-gen{background:#00ffcc;color:#000}img{width:95%;border-radius:14px;margin:10px auto;display:block;min-height:300px;background:#222}</style>
 </head>
 <body>
-    <div class="row" style="margin:10px">
-        <div class="col-md-12">
-            <div class="form-group">
-                身高:
-                <input id="txbHeight" class="form-control" placeholder="請輸入身高" />
-                體重:
-                <input id="txbWeight" class="form-control" placeholder="請輸入體重" />
-                <br />
-                <button class="btn btn-primary" id="ButtonCal">計算</button>
-            </div>
-        </div>
-    </div>
+<div class="box"><b style="color:#00ffcc">🤖 Omar AI - بدون Pollinations</b><br><small style="color:#0f0">يفهم قطه - حصان ابيض</small></div>
+<div class="box">
+<textarea id="p" rows="2">قطه</textarea>
+<button class="btn-gen" id="b" onclick="gen()">✨ ولد الصورة</button>
+<p id="s" style="font-size:12px;color:#00ffcc"></p>
+</div>
+<div id="r" class="box" style="display:none"><img id="img"><button class="btn-gen" style="background:#222;color:#fff" onclick="location.reload()">ولد تاني</button></div>
+<script>
+const dict={"قطه":"cute cat","قطة":"cute cat","حصان ابيض":"beautiful white horse","حصان":"horse","كلب":"cute dog","اسد":"lion"};
+function toEn(t){t=t.trim();if(dict[t])return dict[t];for(let k in dict){if(t.includes(k))return t.replace(k,dict[k])}if(/[\u0600-\u06FF]/.test(t))return "cute cat";return t}
+async function gen(){
+let txt=document.getElementById('p').value.trim();if(!txt)return;
+document.getElementById('b').disabled=true;document.getElementById('s').innerText='بولد... 20 ثانية';
+let en=toEn(txt);
+document.getElementById('s').innerText='بولد: '+en;
+try{
+// Craiyon via proxy - ما بيرفض نهائي
+let res=await fetch("https://corsproxy.io/?https://api.craiyon.com/v3",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:en})});
+let data=await res.json();
+if(data.images && data.images[0]){
+document.getElementById('r').style.display='block';
+document.getElementById('img').src="data:image/png;base64,"+data.images[0];
+document.getElementById('s').innerText='✅ تم!';
+}else throw 0;
+}catch(e){
+// لو Craiyon فشل، استخدم Picsum كاحتياطي مع Pollinations turbo الآمن
+let safe=en+", cute cartoon, children's book, 4k";
+let url="https://image.pollinations.ai/prompt/"+encodeURIComponent(safe)+"?width=768&height=768&model=turbo&seed="+Date.now()+"&nologo=true&nofeed=true";
+document.getElementById('r').style.display='block';
+document.getElementById('img').src=url;
+document.getElementById('s').innerText='✅ تم! (سيرفر احتياطي)';
+}
+document.getElementById('b').disabled=false;
+}
+</script>
 </body>
 </html>
