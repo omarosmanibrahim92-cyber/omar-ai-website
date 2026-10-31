@@ -1,1 +1,150 @@
-<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Omar AI - مربح</title><style>body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:0}.header{background:#111;padding:12px;position:sticky;top:0;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}.credits{background:#05F2DB;color:#000;padding:6px 12px;border-radius:20px;font-weight:bold;font-size:13px}h1{color:#05F2DB;font-size:18px;margin:10px 0}.card{background:#151515;padding:14px;border-radius:18px;max-width:620px;margin:10px auto;border:1px solid #222}textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #333;font-size:15px}.btn-main{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:17px}.btn-pay{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;font-size:16px;display:none}img,video{width:100%;border-radius:14px;margin:10px 0;background:#222;min-height:340px;object-fit:cover;display:none}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99;padding:20px;box-sizing:border-box}.modal-box{background:#1a1a1a;padding:20px;border-radius:18px;max-width:400px;margin:40px auto;border:1px solid #333}.small{font-size:11px;color:#888}</style></head><body><div class="header"><span style="font-weight:bold">🤖 Omar AI</span><span class="credits" id="creditBadge">💎 3 مجاناً</span></div><h1>✨ حول خيالك لفيديو</h1><div class="card"><textarea id="prompt" rows="3">فيديو لي قطه تلعب بكورة صفراء</textarea><button class="btn-main" onclick="generate()">🎬 ولّد فيديو من خيالي</button><p id="status" style="color:#05F2DB;font-size:13px">✅ ليك 3 فيديو مجاناً</p><p id="trans" style="font-size:11px;color:#666"></p><img id="img"><video id="vid" controls autoplay loop playsinline></video><button id="downBtn" class="btn-main" style="display:none;background:#fff;color:#000" onclick="downloadNow()">⬇️ حمل للاستديو</button><button id="payBtn" class="btn-pay" onclick="showPay()"شاهد إعلان إذ خلص المجاني ي</button><p class="small">من خيالك - ما بجيب من يوتيوب</p></div><div class="modal" id="payModal"><div class="modal-box"><h3 style="color:#05F2DB">💰 باقات Omar AI</h3><p style="font-size:14pxاعلان ص!</p><div style="text-align:right;background:#222;padding:10px;border-radius:12px;margin:8px 0"><b>🔹 10 فيديو = 2,000 جنيه</b><br><b>🔹 50 فيديو = 7,000 جنيه</b><br><b>🔹 100 فيديو = 10,000 جنيه</b></div><p style="font-size:13px;color:#05F2DB"بنكك على:<br><b style="font-size:18px">1234567 - عمر عثمان</b></p><button class="btn-main" style="background:#25D366;color:#fff" onclick="openWhatsApp()">مجاني/-button><input id="unlockCode" placeholder=شاهد إعلان " style="width:90%;padding:10px;border-radius:8px;background:#111;color:#fff;border:1px solid #333;margin:8px 0"><button class="btn-main" style="background:#fff;color:#000" onclick="unlock()">✅مجاني</button><button onclick="hidePay()" style="background:none;border:none;color:#888;margin-top:8px">إغلاق</button></div></div><script>let credits=parseInt(localStorage.getItem('omar_credits')||'3');let currentUrl="";updateBadge();function updateBadge(){let b=document.getElementById('creditBadge');if(credits>0){b.innerText="💎 "+credits+" مجاناً";b.style.background="#05F2DB";}else{b.innerText="🔒 خلص";b.style.background="#ff0050";b.style.color="#fff";}document.getElementById('payBtn').style.display=credits<=0?"block":"none";}async function translateArToEn(t){try{let r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(t)+"&langpair=ar|en");let d=await r.json();return d.responseData.translatedText||t;}catch(e){return t;}}async function generate(){let ar=document.getElementById('prompt').value.trim();if(!ar){alert("اكتب خيالك");return;}if(credits<=0){showPay();return;}let status=document.getElementById('status');let trans=document.getElementById('trans');let img=document.getElementById('img');let vid=document.getElementById('vid');status.innerText="⏳ بترجم...";let en=await translateArToEn(ar);trans.innerText="🔤 "+en;credits--;localStorage.setItem('omar_credits',credits);updateBadge();status.innerText="⏳ بولّد: "+ar+" ... باقي "+credits;let finalPrompt=en+", realistic, cute, 4k";let url="https://image.pollinations.ai/prompt/"+encodeURIComponent(finalPrompt)+"?width=1024&height=768&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999);currentUrl=url;img.src=url;img.style.display="block";vid.style.display="none";img.onload=()=>{status.innerText="✅ اتولد! باقي ليك "+credits;document.getElementById('downBtn').style.display="block";if(credits==0){showPay();}};}function downloadNow(){if(!currentUrl){alert("ولّد أولا");return;}let a=document.createElement('a');a.href=currentUrl;a.download="omar-ai-"+Date.now()+".jpg";a.target="_blank";document.body.appendChild(a);a.click();document.body.removeChild(a);}function showPay(){document.getElementById('payModal').style.display="block";}function hidePay(){document.getElementById('payModal').style.display="none";}function openWhatsApp(){let msg=encodeURIComponent("سلام Omar AI -شاهد اعلان);window.open("https://wa.me/249967602085?text="+msg,"_blank");}function unlock(){let code=document.getElementById('unlockCode').value.trim();if(code=="OMAR10"){credits+=10;alert("+10");}else if(code=="OMAR50"){credits+=50;alert("+50");}else if(code=="OMAR100"){credits+=100;alert("+100");}else if(code=="FREE3"){credits+=3;alert("+3");}else{alert("كود غلط");return;}localStorage.setItem('omar_credits',credits);updateBadge();hidePay();document.getElementById('status').innerText="✅ تم! باقي "+credits;}</script></body></html>
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Omar AI - تطبيق مربح</title>
+<style>
+body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:0}
+.header{background:#111;padding:12px;position:sticky;top:0;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center}
+.credits{background:#05F2DB;color:#000;padding:6px 12px;border-radius:20px;font-weight:bold;font-size:13px}
+h1{color:#05F2DB;font-size:18px;margin:10px 0}
+.card{background:#151515;padding:14px;border-radius:18px;max-width:620px;margin:10px auto;border:1px solid #222}
+textarea{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #333;font-size:15px}
+.btn-main{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#05F2DB;color:#000;font-size:17px}
+.btn-pay{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:8px 0;background:#ff0050;color:#fff;font-size:16px;display:none}
+img,video{width:100%;border-radius:14px;margin:10px 0;background:#222;min-height:340px;object-fit:cover;display:none}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:99;padding:20px;box-sizing:border-box}
+.modal-box{background:#1a1a1a;padding:20px;border-radius:18px;max-width:400px;margin:40px auto;border:1px solid #333}
+.small{font-size:11px;color:#888}
+</style>
+</head>
+<body>
+<div class="header">
+<span style="font-weight:bold">🤖 Omar AI - مربح</span>
+<span class="credits" id="creditBadge">💎 3 مجاناً</span>
+</div>
+
+<h1>✨ حول خيالك لفيديو</h1>
+
+<div class="card">
+<textarea id="prompt" rows="3">فيديو لي قطه تلعب بكورة صفراء</textarea>
+<button class="btn-main" onclick="generate()">🎬 ولّد فيديو من خيالي</button>
+<p id="status" style="color:#05F2DB;font-size:13px">✅ ليك 3 فيديو مجاناً - جرب هسي</p>
+<p id="trans" style="font-size:11px;color:#666"></p>
+
+<img id="img">
+<video id="vid" controls autoplay loop playsinline></video>
+
+<button id="downBtn" class="btn-main" style="display:none;background:#fff;color:#000" onclick="downloadNow()">⬇️ حمل للاستديو</button>
+<button id="payBtn" class="btn-pay" onclick="showPay()">🔓 خلصت المجاني - اشتري باقات</button>
+
+<p class="small">التوليد من خيالك - ما بجيب من يوتيوب - شغال في السودان بدون VPN</p>
+</div>
+
+<!-- نافذة الدفع -->
+<div class="modal" id="payModal">
+<div class="modal-box">
+<h3 style="color:#05F2DB">💰 باقات Omar AI</h3>
+<p style="font-size:14px">رصيدك خلص! اختار باقة:</p>
+<div style="text-align:right;background:#222;padding:10px;border-radius:12px;margin:8px 0">
+<b>🔹 باقة البداية:</b> 10 فيديو = <b>2,000 جنيه</b><br>
+<b>🔹 باقة المحترف:</b> 50 فيديو = <b>7,000 جنيه</b> (أكثر مبيعاً)<br>
+<b>🔹 شهرية:</b> 100 فيديو = <b>10,000 جنيه</b>
+</div>
+<p style="font-size:13px;color:#05F2DB">حول بنكك على:<br><b style="font-size:18px">1234567 - عمر عثمان</b></p>
+<p style="font-size:12px">بعد التحويل دوس الزر التحت وأرسل الإيصال</p>
+<button class="btn-main" style="background:#25D366;color:#fff" onclick="openWhatsApp()">📱 أرسل إيصال بنكك - واتساب</button>
+<p style="font-size:11px;margin-top:10px">أو للعالم: PayPal / Stripe - تواصل واتساب</p>
+<input id="unlockCode" placeholder="كود التفعيل (بديهو ليك بعد الدفع)" style="width:90%;padding:10px;border-radius:8px;background:#111;color:#fff;border:1px solid #333;margin:8px 0">
+<button class="btn-main" style="background:#fff;color:#000" onclick="unlock()">✅ فعّل رصيدي</button>
+<button onclick="hidePay()" style="background:none;border:none;color:#888;margin-top:8px">إغلاق</button>
+</div>
+</div>
+
+<script>
+let credits = parseInt(localStorage.getItem('omar_credits') || '3');
+let currentUrl = "";
+updateBadge();
+
+function updateBadge(){
+  let badge=document.getElementById('creditBadge');
+  if(credits>0){badge.innerText="💎 "+credits+" مجاناً"; badge.style.background="#05F2DB";}
+  else{badge.innerText="🔒 خلص - اشتري"; badge.style.background="#ff0050"; badge.style.color="#fff";}
+  document.getElementById('payBtn').style.display = credits<=0 ? "block" : "none";
+}
+
+async function translateArToEn(t){
+  try{
+    let r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(t)+"&langpair=ar|en");
+    let d=await r.json();
+    return d.responseData.translatedText||t;
+  }catch(e){return t;}
+}
+
+async function generate(){
+  let ar=document.getElementById('prompt').value.trim();
+  if(!ar){alert("اكتب خيالك أولاً");return;}
+  if(credits<=0){showPay();return;}
+  
+  let status=document.getElementById('status');
+  let trans=document.getElementById('trans');
+  let img=document.getElementById('img');
+  let vid=document.getElementById('vid');
+  
+  status.innerText="⏳ بترجم...";
+  let en=await translateArToEn(ar);
+  trans.innerText="🔤 "+en;
+  
+  // خصم كريديت
+  credits--; localStorage.setItem('omar_credits', credits); updateBadge();
+  
+  status.innerText="⏳ بولّد: "+ar+" ... (باقي ليك "+credits+")";
+  
+  let finalPrompt=en+", cute, realistic, 4k, highly detailed, cinematic";
+  if(en.toLowerCase().includes("cat")) finalPrompt=en+", cute cat playing, realistic, adorable";
+  
+  let url="https://image.pollinations.ai/prompt/"+encodeURIComponent(finalPrompt)+"?width=1024&height=768&model=flux&nologo=true&seed="+Math.floor(Math.random()*9999999)+"&t="+(Date.now());
+  
+  currentUrl=url;
+  img.src=url;
+  img.style.display="block";
+  vid.style.display="none";
+  
+  img.onload=()=>{
+    status.innerText="✅ اتولد! - باقي ليك "+credits+" - خيال: "+ar;
+    document.getElementById('downBtn').style.display="block";
+    if(credits==0){status.innerText+=" - خلصت المجاني! اشتري باقة"; showPay();}
+  };
+}
+
+function downloadNow(){
+  if(!currentUrl){alert("ولّد أولاً");return;}
+  let a=document.createElement('a');
+  a.href=currentUrl; a.download="omar-ai-"+Date.now()+".jpg"; a.target="_blank";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function showPay(){document.getElementById('payModal').style.display="block";}
+function hidePay(){document.getElementById('payModal').style.display="none";}
+function openWhatsApp(){
+  let msg=encodeURIComponent("سلام Omar AI - حولت بنكك - داير أفعل الباقة - رقمي: "+prompt("اكتب رقم حسابك أو اسمك عشان نعرفك:"));
+  window.open("https://wa.me/249900000000?text="+msg,"_blank"); // غيّر الرقم لرقمك
+}
+function unlock(){
+  let code=document.getElementById('unlockCode').value.trim();
+  // أكواد بسيطة - انت تغيرها
+  if(code=="OMAR10"){credits+=10; alert("تم! +10 فيديو"); }
+  else if(code=="OMAR50"){credits+=50; alert("تم! +50 فيديو"); }
+  else if(code=="OMAR100"){credits+=100; alert("تم! +100 فيديو"); }
+  else if(code=="FREE3"){credits+=3; alert("تم! +3"); }
+  else{alert("كود غلط - راسلنا واتساب"); return;}
+  localStorage.setItem('omar_credits', credits);
+  updateBadge(); hidePay();
+  document.getElementById('status').innerText="✅ تم التفعيل! باقي ليك "+credits+" فيديو";
+}
+
+// للتجربة: اكتب FREE3 في خانة الكود يديك 3 تاني
+</script>
+</body>
+</html>
