@@ -3,164 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Omar AI - مولد الصور بالعربي</title>
-<meta name="description" content="Omar AI - ولد اي صورة من خيالك بالعربي مجانا">
+<title>Omar AI - شاهد إعلان</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#080808;color:#fff;font-family:system-ui;text-align:center;padding:0}
-.header{padding:14px;background:#111;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #00ffcc33;position:sticky;top:0;z-index:10}
-.logo{font-weight:bold;color:#00ffcc}
-.credits{background:#00ffcc;color:#000;padding:6px 14px;border-radius:20px;font-weight:bold;font-size:13px}
-.card{background:#111;padding:16px;border-radius:20px;max-width:620px;margin:14px auto;border:1px solid #222}
-textarea{width:100%;padding:14px;border-radius:14px;background:#1e1e1e;color:#fff;border:2px solid #00ffcc;font-size:16px;outline:none}
-.btn{width:100%;padding:16px;border:none;border-radius:30px;font-weight:bold;font-size:18px;cursor:pointer;margin:8px 0}
-.btn-gen{background:#00ffcc;color:#000}
-.btn-watch{background:#ffeb3b;color:#000;animation:pulse 1.2s infinite;display:none}
-.btn-share{background:#222;color:#fff;border:1px solid #333}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-.result{margin:14px auto;max-width:620px}
-.result img{width:100%;border-radius:16px;min-height:300px;background:#111;object-fit:cover}
-.footer{font-size:11px;color:#666;padding:20px;line-height:1.8}
-.footer a{color:#00ffcc;text-decoration:none}
-.ad-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.96);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:20px}
-.ad-box{background:#161616;border:2px solid #00ffcc;border-radius:22px;padding:20px;max-width:400px;width:92%}
-.timer{background:#00ffcc;color:#000;padding:6px 16px;border-radius:20px;font-weight:bold;display:inline-block;margin:10px}
-.ad-click{background:#00ffcc;color:#000;width:100%;padding:14px;border:none;border-radius:14px;font-weight:bold;font-size:16px;cursor:pointer;margin:10px 0}
+body{background:#0a0a0a;color:#fff;font-family:system-ui;padding:0;margin:0;text-align:center}
+.top{padding:12px;background:#111;display:flex;justify-content:space-between;border-bottom:1px solid #00ffcc33}
+.credits-box{background:#1a1a1a;border:1px solid #00ffcc;border-radius:10px;padding:10px;margin:15px auto;max-width:500px}
+.input-box{width:88%;max-width:500px;height:90px;background:#1e1e1e;color:#fff;border:2px solid #00ffcc;border-radius:15px;padding:15px;margin:10px auto;display:block}
+.btn{background:#00ffcc;color:#000;font-weight:bold;padding:15px;border:none;border-radius:30px;width:88%;max-width:500px;font-size:18px;cursor:pointer}
+.btn-watch{background:#ffeb3b;color:#000;font-weight:bold;padding:15px;border:none;border-radius:30px;width:88%;max-width:500px;font-size:18px;cursor:pointer;animation:pulse 1s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.ad-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.ad-content{background:#1a1a1a;border:2px solid #00ffcc;border-radius:20px;padding:20px;max-width:400px;width:90%}
+.ad-timer{background:#00ffcc;color:#000;padding:5px 15px;border-radius:20px;font-weight:bold;margin:10px;display:inline-block}
+.ad-place{width:100%;height:200px;background:#000;border-radius:15px;display:flex;align-items:center;justify-content:center;margin:15px 0;color:#888;border:1px dashed #444}
+.result-img{width:88%;max-width:500px;border-radius:15px;margin:15px auto;display:block}
 </style>
 </head>
 <body>
-<div class="header">
-<span class="logo">🤖 Omar AI</span>
-<span class="credits" id="creditTop">3 صور</span>
+<div class="top"><span>🤖 Omar AI</span><span id="creditDisplay" style="background:#00ffcc;color:#000;padding:5px 12px;border-radius:20px;font-size:13px">...</span></div>
+<div class="credits-box">رصيدك: <span id="creditNum">0</span> صور</div>
+<textarea class="input-box" id="prompt" placeholder="اكتب وصف الصورة..."></textarea>
+<button class="btn" id="generateBtn" onclick="generateImage()">✨ ولّد الصورة</button>
+<div id="watchSection" style="display:none">
+<button class="btn-watch" onclick="watchAd()">🎬 شاهد إعلان 15 ثانية +1 صورة</button>
+<p style="font-size:12px;color:#888">الإعلانات بتخلي التطبيق مجاني ❤️</p>
 </div>
-
-<div class="card">
-<h2 style="margin:6px 0;color:#00ffcc">اكتب بالعربي - يولد ليك طوالي</h2>
-<p style="font-size:12px;color:#aaa">مثال: قطة تلعب، اسد في الصحراء، ركشة سودانية</p>
-<textarea id="prompt" rows="3" placeholder="فيديو لي قطة تلعب كورة..."></textarea>
-<button class="btn btn-gen" id="genBtn" onclick="generate()">✨ ولد الصورة</button>
-<button class="btn btn-watch" id="watchBtn" onclick="openAdOverlay()">🎬 شاهد إعلان 15 ثانية +1 صورة مجانية</button>
-<p id="status" style="color:#00ffcc;font-size:13px"></p>
-<p id="translated" style="color:#666;font-size:11px"></p>
-</div>
-
-<div class="result" id="result"></div>
+<div id="result"></div>
 
 <div class="ad-overlay" id="adOverlay">
-<div class="ad-box">
-<h3 style="color:#00ffcc;margin-top:0">🎥 ادعم Omar AI</h3>
-<p style="font-size:13px;color:#aaa">شاهد اعلان 5 ثواني عشان نقدر نخلي التطبيق مجاني</p>
-
-<button class="ad-click" onclick="clickAd()">👆 اضغط هنا لفتح الإعلان (اربح)</button>
-
-<div class="timer" id="adTimer">15 ثانية</div>
-<p style="font-size:11px;color:#888" id="waitText">اضغط الزر فوق اولاً ثم انتظر</p>
-<button id="claimBtn" class="btn btn-gen" style="display:none" onclick="claimReward()">✅ استلم صورتك المجانية</button>
-<button onclick="closeAd()" style="background:none;border:none;color:#666;margin-top:10px">اغلاق</button>
+<div class="ad-content">
+<h3 style="color:#00ffcc">🎥 شاهد الإعلان</h3>
+<div class="ad-place" id="adPlace">
+<div><p>📢 مساحة إعلانية</p><p style="font-size:11px">هنا يظهر إعلانك<br>شركة / تطبيق / AdMob</p></div>
 </div>
-</div>
-
-<div class="card">
-<button class="btn btn-share" onclick="shareApp()">🔗 شارك التطبيق مع اصحابك +2 صور هدية</button>
-<p style="font-size:11px;color:#555">كل ما تشارك التطبيق بينتشر اسرع</p>
-</div>
-
-<div class="footer">
-<a href="#" onclick="showPrivacy()">سياسة الخصوصية</a> | Omar AI 2026<br>
-التطبيق لا يجمع بيانات شخصية. الصور يتم توليدها عبر خدمة خارجية.<br>
-الإعلانات تظهر فقط بموافقتك (عند الضغط على زر المشاهدة).
-<div id="privacy" style="display:none;text-align:right;background:#111;padding:14px;border-radius:14px;margin-top:14px;font-size:12px;color:#ccc">
-<b>سياسة الخصوصية:</b><br>
-1. لا نجمع اسماء او صور.<br>
-2. لا نبيع بيانات.<br>
-3. نستخدم رابط اعلاني من Adsterra يفتح فقط عند ضغطك.<br>
-4. للتواصل: omar.app.contact@gmail.com
+<div class="ad-timer" id="adTimer">15 ثانية</div><br>
+<button id="claimBtn" style="display:none;background:#00ffcc;color:#000;padding:12px 25px;border:none;border-radius:25px;font-weight:bold;margin-top:15px;width:100%;cursor:pointer" onclick="claimReward()">✅ استلم صورتك</button>
+<p id="waitText" style="font-size:12px;color:#aaa">انتظر حتى ينتهي...</p>
 </div>
 </div>
 
 <script>
-const AD_LINK = "https://asiafilm.org/4/75b0210cfca5e17b2ff21efe527a9072";
 let credits = parseInt(localStorage.getItem('omar_credits') || '3');
-let adClicked = false;
-
-function updateCredits(){
- document.getElementById('creditTop').innerText = credits + ' صورة';
- localStorage.setItem('omar_credits', credits);
+function updateUI(){
+ document.getElementById('creditNum').innerText=credits;
+ document.getElementById('creditDisplay').innerText=credits+' صورة';
  if(credits<=0){
-  document.getElementById('genBtn').style.display='none';
-  document.getElementById('watchBtn').style.display='block';
-  document.getElementById('creditTop').innerText='0 - شاهد اعلان';
-  document.getElementById('creditTop').style.background='#ffeb3b';
+  document.getElementById('generateBtn').style.display='none';
+  document.getElementById('watchSection').style.display='block';
+  document.getElementById('creditDisplay').innerText='0 - شاهد إعلان';
+  document.getElementById('creditDisplay').style.background='#ffeb3b';
  }else{
-  document.getElementById('genBtn').style.display='block';
-  document.getElementById('watchBtn').style.display='none';
-  document.getElementById('creditTop').style.background='#00ffcc';
+  document.getElementById('generateBtn').style.display='inline-block';
+  document.getElementById('watchSection').style.display='none';
+  document.getElementById('creditDisplay').style.background='#00ffcc';
  }
 }
-updateCredits();
-
-async function translateArToEn(text){
- try{
-  let r=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=ar|en");
-  let d=await r.json();
-  if(d.responseData && d.responseData.translatedText) return d.responseData.translatedText;
- }catch(e){}
- return text;
+updateUI();
+function generateImage(){
+ if(credits<=0){alert('شاهد إعلان أول');return;}
+ let p=document.getElementById('prompt').value;
+ if(!p.trim()){alert('اكتب وصف أول');return;}
+ credits--;localStorage.setItem('omar_credits',credits);updateUI();
+ let imgUrl='https://image.pollinations.ai/prompt/'+encodeURIComponent(p)+'?nologo=true&seed='+Date.now();
+ document.getElementById('result').innerHTML='<p>⏳ جاري التوليد...</p><img class="result-img" src="'+imgUrl+'">';
 }
-
-async function generate(){
- if(credits<=0){openAdOverlay();return;}
- let ar = document.getElementById('prompt').value.trim();
- if(!ar){alert('اكتب وصف اول');return;}
- document.getElementById('status').innerText='⏳ بترجم...';
- let en = await translateArToEn(ar);
- document.getElementById('translated').innerText='🔤 '+en;
- document.getElementById('status').innerText='🎨 بولد: '+ar;
- credits--; updateCredits();
- let url = "https://image.pollinations.ai/prompt/"+encodeURIComponent(en+", highly detailed, 4k, realistic")+"?width=1024&height=1024&nologo=true&seed="+Date.now();
- document.getElementById('result').innerHTML = '<p>⏳ جاري التوليد...</p><img id="genImg" src="'+url+'" onload="document.getElementById(\'status\').innerText=\'✅ جاهز!\'"><br><button class=\'btn btn-gen\' onclick=\'downloadImg()\'>⬇️ تحميل</button><button class=\'btn btn-share\' onclick=\'shareImg()\'>📤 مشاركة الصورة</button>';
-}
-
-function openAdOverlay(){
+function watchAd(){
  document.getElementById('adOverlay').style.display='flex';
- adClicked=false;
- let t=15;
- document.getElementById('adTimer').innerText=t+' ثانية';
+ let time=15;document.getElementById('adTimer').innerText=time+' ثانية';
  document.getElementById('claimBtn').style.display='none';
- document.getElementById('waitText').innerText='اضغط زر الاعلان فوق ثم انتظر';
- let iv=setInterval(()=>{
-  t--; document.getElementById('adTimer').innerText=t+' ثانية';
-  if(t<=0){clearInterval(iv); if(adClicked){document.getElementById('claimBtn').style.display='block';document.getElementById('waitText').innerText='مبروك! استلم هديتك';}else{document.getElementById('waitText').innerText='لازم تضغط زر الاعلان اولاً';document.getElementById('adTimer').innerText='اضغط الاعلان';}}
+ let interval=setInterval(()=>{
+  time--;document.getElementById('adTimer').innerText=time+' ثانية';
+  if(time<=0){clearInterval(interval);document.getElementById('adTimer').innerText='انتهى ✅';document.getElementById('claimBtn').style.display='block';document.getElementById('waitText').innerText='مبروك! دوس استلم';}
  },1000);
 }
-
-function clickAd(){
- adClicked=true;
- window.open(AD_LINK,'_blank');
- document.getElementById('waitText').innerText='شكرا! انتظر 5 ثواني وانت تربح ❤️';
-}
-
-function claimReward(){
- if(!adClicked){alert('لازم تضغط زر الاعلان اول');return;}
- credits+=1; updateCredits();
- document.getElementById('adOverlay').style.display='none';
- alert('✅ خدت صورة! رصيدك: '+credits);
-}
-
-function closeAd(){document.getElementById('adOverlay').style.display='none';}
-
-function downloadImg(){
- let img=document.getElementById('genImg'); if(!img) return;
- let a=document.createElement('a'); a.href=img.src; a.target='_blank'; a.download='omar-ai-'+Date.now()+'.jpg'; a.click();
-}
-function shareApp(){
- if(navigator.share){navigator.share({title:'Omar AI',text:'جرب تطبيق Omar AI بولد صور بالعربي مجانا',url:location.href}); credits+=2; updateCredits();}else{prompt('انسخ الرابط وشاركو:',location.href); credits+=2; updateCredits();}
-}
-function shareImg(){
- let img=document.getElementById('genImg'); if(!img) return;
- if(navigator.share){navigator.share({title:'صورتي من Omar AI',url:img.src});}else{prompt('رابط الصورة:',img.src);}
-}
-function showPrivacy(){let p=document.getElementById('privacy'); p.style.display = p.style.display=='none'?'block':'none';}
+function claimReward(){credits++;localStorage.setItem('omar_credits',credits);document.getElementById('adOverlay').style.display='none';updateUI();alert('✅ خدت صورة مجانية! رصيدك:'+credits);}
 </script>
 </body>
 </html>
