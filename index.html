@@ -1,95 +1,14 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Video Generator - تطبيقك</title>
-<style>
-*{box-sizing:border-box; font-family:Tahoma}
-body{background:#0f0f0f; color:#fff; margin:0; padding:20px; text-align:center}
-.container{max-width:700px; margin:auto}
-h1{color:#00ff88}
-textarea{width:100%; height:120px; padding:15px; border-radius:12px; border:none; font-size:18px; margin:15px 0}
-button{background:#00ff88; color:#000; border:none; padding:15px 30px; font-size:18px; border-radius:30px; cursor:pointer; font-weight:bold; width:100%}
-button:disabled{background:#555}
-#videoBox{margin-top:20px; background:#1a1a1a; border-radius:12px; padding:15px; min-height:300px}
-video{width:100%; border-radius:12px}
-.loader{display:none; margin:20px}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>🎬 مولد الفيديو بالذكاء الاصطناعي</h1>
-<p>اكتب وصف الفيديو الدايرو</p>
-<textarea id="prompt" placeholder="مثال: ولد سوداني ماشي في سوق عطبرة، تصوير سينمائي..."></textarea>
-<button id="genBtn" onclick="generateVideo()">توليد الفيديو 🚀</button>
-<div class="loader" id="loader">⏳ جاري التوليد... قد ياخد دقيقة</div>
-<div id="videoBox">
-<p>الفيديو حيظهر هنا</p>
-</div>
-</div>
+import Replicate from "replicate";
+const replicate = new Replicate();
 
-<script>
-// هذا هو الملف البشغل التطبيق كلو بدون توقف
-const API_KEY = "حط_مفتاح_API_بتاعك_هنا"; // من Replicate أو HuggingFace
-
-async function generateVideo(){
-  const prompt = document.getElementById('prompt').value;
-  const box = document.getElementById('videoBox');
-  const loader = document.getElementById('loader');
-  const btn = document.getElementById('genBtn');
-
-  if(!prompt){ alert("اكتب وصف أول"); return; }
-
-  btn.disabled = true;
-  loader.style.display = "block";
-  box.innerHTML = "";
-
-  try {
-    // هنا بتربط مع موديل توليد فيديو
-    // مثال باستخدام Replicate API - موديل Stable Video
-
-    // للتجربة بدون API - بعرض فيديو تجريبي
-    // لو عندك API حقيقي شيل الكود التحت وفعل الـ fetch
-
-    await new Promise(r => setTimeout(r, 3000)); // محاكاة تحميل
-
-    box.innerHTML = `
-      <p>تم التوليد لـ: <b>${prompt}</b></p>
-      <video controls autoplay loop>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-      </video>
-      <p style="color:#00ff88">✅ الفيديو جاهز! (هذا فيديو تجريبي، اربط الـ API ليشتغل حقيقي)</p>
-    `;
-
-    /* الكود الحقيقي للربط - فعّلو بعد ما تجيب API KEY
-    const response = await fetch("https://api.replicate.com/v1/predictions", {
-      method:"POST",
-      headers:{
-        "Authorization": `Token ${API_KEY}`,
-        "Content-Type":"application/json"
-      },
-      body: JSON.stringify({
-        version:"MODEL_VERSION",
-        input:{ prompt: prompt }
-      })
-    });
-    const data = await response.json();
-    // ثم تابع الـ polling لحد ما الفيديو يجهز
-    */
-
-  } catch(e){
-    box.innerHTML = `<p style="color:red">خطأ: ${e.message}</p>`;
-  } finally {
-    loader.style.display = "none";
-    btn.disabled = false;
+const output = await replicate.run(
+  "google/imagen-4",
+  {
+    input: {
+      prompt: "The photo: Create a cinematic, photorealistic medium shot capturing the nostalgic warmth of a late 90s indie film. The focus is a young woman with brightly dyed pink-gold hair and freckled skin, looking directly and intently into the camera lens with a hopeful yet slightly uncertain smile, she is slightly off-center. She wears an oversized, vintage band t-shirt that says \"Replicate\" (slightly worn) over a long-sleeved striped top and simple silver stud earrings. The lighting is soft, golden hour sunlight streaming through a slightly dusty window, creating lens flare and illuminating dust motes in the air. The background shows a blurred, cluttered bedroom with posters on the wall and fairy lights, rendered with a shallow depth of field. Natural film grain, a warm, slightly muted color palette, and sharp focus on her expressive eyes enhance the intimate, authentic feel",
+      aspect_ratio: "16:9",
+      safety_filter_level: "block_medium_and_above"
+    }
   }
-}
-
-// يشتغل بدون توقف - Service Worker بسيط
-if ('serviceWorker' in navigator){
-  // يخلي التطبيق يشتغل حتى لو النت ضعيف
-}
-</script>
-</body>
-</html>
+);
+console.log(output);
