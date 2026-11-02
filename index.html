@@ -1,45 +1,18 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Omar AI - توليد حقيقي</title>
-<style>
-body{margin:0;background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:0}
-.header{background:#111;padding:12px;border-bottom:1px solid #222}
-.card{background:#151515;padding:16px;border-radius:18px;max-width:620px;margin:15px auto;border:1px solid #222}
-input{width:94%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #333;font-size:15px}
-.btn{width:96%;padding:15px;border:none;border-radius:12px;font-weight:bold;margin:10px 0;background:#05F2DB;color:#000;font-size:17px}
-img{width:100%;border-radius:14px;margin:12px 0;display:none;background:#222;min-height:300px}
-#status{color:#05F2DB;font-size:13px}
-</style>
-</head>
-<body>
-<div class="header">🤖 Omar AI - مربوط بـ API حقيقي</div>
-<div class="card">
-<h2>ولد سوداني ماشي في عطبرة</h2>
+<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Omar AI - حقيقي</title><style>body{background:#0a0a0a;color:#fff;font-family:system-ui;text-align:center;padding:20px}input{width:90%;padding:14px;border-radius:12px;background:#222;color:#fff;border:2px solid #333}button{width:92%;padding:15px;margin:10px;background:#05F2DB;color:#000;border:none;border-radius:12px;font-weight:bold;font-size:17px}img{width:100%;max-width:600px;border-radius:14px;margin:15px 0;display:none}</style></head><body>
+<h2>🤖 Omar AI - توليد حقيقي</h2>
 <input id="prompt" value="ولد سوداني ماشي في شوارع عطبرة">
-<button class="btn" onclick="generate()">🎬 ولد صورة حقيقية 🚀</button>
-<p id="status">✅ جاهز - المفتاح مربوط ومخفي في Vercel</p>
+<button onclick="generate()">🎬 ولد صورة حقيقية 🚀</button>
+<p id="status"></p>
 <img id="img">
-<button id="down" class="btn" style="display:none;background:#fff" onclick="download()">⬇️ حمل الصورة</button>
-</div>
 <script>
-let current="";
 async function generate(){
- let p=document.getElementById('prompt').value;
- let s=document.getElementById('status'), img=document.getElementById('img');
- s.innerText="⏳ بولد حقيقي من Google Imagen-4... انتظر 15 ثانية";
- img.style.display="none";
- document.getElementById('down').style.display="none";
- try{
+  let p=document.getElementById('prompt').value;
+  let s=document.getElementById('status'), img=document.getElementById('img');
+  s.innerText="⏳ بولد حقيقي... 15 ثانية";
+  img.style.display="none";
   let res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p})});
   let data=await res.json();
-  if(data.image){ current=data.image; img.src=data.image; img.style.display="block"; s.innerText="✅ اتولد حقيقي: "+p; document.getElementById('down').style.display="block"; }
-  else{ s.innerText="❌ "+data.error; }
- }catch(e){ s.innerText="❌ خطأ: "+e.message; }
+  if(data.image){ img.src=data.image; img.style.display="block"; s.innerText="✅ اتولد حقيقي!"; }
+  else{ s.innerText="❌ خطأ: "+data.error; }
 }
-function download(){ if(!current)return; let a=document.createElement('a'); a.href=current; a.download="omar-atbara.jpg"; a.target="_blank"; a.click(); }
-</script>
-</body>
-</html>
+</script></body></html>
