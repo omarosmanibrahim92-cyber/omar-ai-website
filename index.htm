@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Omar AI Real</title>
+<style>body{margin:0;background:#000;color:#fff;font-family:system-ui;text-align:center}.box{max-width:600px;margin:20px auto;padding:16px;background:#151515;border-radius:16px}input{width:94%;padding:14px;border-radius:10px;background:#222;color:#fff;border:1px solid #333}button{width:96%;padding:14px;margin:10px 0;border-radius:10px;border:0;background:#05F2DB;font-weight:bold}img{width:100%;border-radius:12px;margin-top:10px;display:none}</style></head>
+<body><div class="box"><h2>🎬 ولد سوداني في عطبرة - حقيقي</h2><input id="p" value="ولد سوداني ماشي في شوارع عطبرة"><button onclick="go()">ولد صورة حقيقية 🚀</button><p id="s">جاهز</p><img id="img"></div>
+<script>
+const TOKEN="r8_LZTntSaRnDjGOGOe6Q1cAap6CqSMraF0oTj6U";
+async function go(){
+let P=document.getElementById('p').value,s=document.getElementById('s'),img=document.getElementById('img');
+s.innerText="⏳ بولد...";let en="Young Sudanese boy walking in streets of Atbara Sudan, cinematic photorealistic, 4k";
+let r=await fetch("https://api.replicate.com/v1/predictions",{method:"POST",headers:{"Authorization":"Token "+TOKEN,"Content-Type":"application/json"},body:JSON.stringify({version:"google/imagen-4",input:{prompt:en}})});let j=await r.json();let id=j.id;
+while(true){await new Promise(r=>setTimeout(r,2000));let r2=await fetch("https://api.replicate.com/v1/predictions/"+id,{headers:{"Authorization":"Token "+TOKEN}});let j2=await r2.json();if(j2.status==="succeeded"){img.src=j2.output;img.style.display="block";s.innerText="✅ اتولد حقيقي!";break}if(j2.status==="failed"){s.innerText="❌ "+j2.error;break}s.innerText="⏳ "+j2.status}};
+</script></body></html>
